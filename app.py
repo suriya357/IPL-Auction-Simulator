@@ -28,22 +28,22 @@ def create_app():
     with app.app_context():
         db.create_all()
 
-    admin = User.query.filter_by(username="admin").first()
+        admin = User.query.filter_by(username="admin").first()
 
-    if not admin:
-        admin = User()
+        if not admin:
+            admin = User()
 
-        admin.username = "admin"
-        admin.role = "admin"
+            admin.username = "admin"
+            admin.role = "admin"
 
-        admin.set_password(
-            os.environ.get("ADMIN_PASSWORD", "admin123")
-        )
+            admin.set_password(
+                os.environ.get("ADMIN_PASSWORD", "admin123")
+            )
 
-        db.session.add(admin)
-        db.session.commit()
+            db.session.add(admin)
+            db.session.commit()
 
-        print("Default admin created.")
+            print("Default admin created.")
 
     from routes.admin_routes import admin_bp
     from routes.team_routes import team_bp
