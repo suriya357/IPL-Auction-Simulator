@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 from constants import TEAM_LOGOS, TEAM_THEME, ROLE_ICONS
 from extensions import db
 
@@ -84,6 +84,9 @@ def create_app():
             ROLE_ICONS=ROLE_ICONS
         )
 
+    from utils import format_money
+    app.jinja_env.filters['format_money'] = format_money
+
     @app.route("/")
     def home():
         from services.team_analyzer import get_auction_overview, get_team_strength_preview, get_most_expensive_purchases, get_top_value_purchases
@@ -114,6 +117,8 @@ def create_app():
 
     @app.route("/login")
     def login():
+        if session.get("is_admin"):
+            return redirect(url_for("admin_bp.admin"))
         return render_template("login.html")
 
     @app.route("/admin_login", methods=["POST"])
@@ -125,12 +130,23 @@ def create_app():
             from models.auction import User
             user = User.query.filter_by(username=username).first()
             if user and user.check_password(password) and user.role == "admin":
+                session["is_admin"] = True
+                session["admin_username"] = user.username
+                session["role"] = "admin"
                 return redirect(url_for("admin_bp.admin"))
         except Exception:
             if username == "admin" and password == "admin123":
+                session["is_admin"] = True
+                session["admin_username"] = "admin"
+                session["role"] = "admin"
                 return redirect(url_for("admin_bp.admin"))
 
         return render_template("login.html", error="Invalid username or password.")
+        
+    @app.route("/logout")
+    def logout():
+        session.clear()
+        return redirect(url_for("home"))
 
     return app
 

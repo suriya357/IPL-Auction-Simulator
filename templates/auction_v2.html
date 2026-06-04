@@ -40,6 +40,25 @@
     }
     .ticker-item { display: inline-block; padding: 0 2rem; font-weight: bold; font-family: monospace; }
     @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
+    
+    /* Utility */
+    .text-truncate-multi {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;  
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .player-name-marquee {
+        font-size: clamp(2rem, 4vw, 4rem);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-width: 0;
+    }
+    .leading { box-shadow: 0 0 15px #3498db !important; }
+    .winner { box-shadow: 0 0 20px gold !important; }
+    .passed { filter: grayscale(100%); opacity: 0.6; }
 </style>
 
 <!-- Fullscreen Overlays -->
@@ -94,27 +113,35 @@
                         <div class="display-1 mb-2">{{ ROLE_ICONS.get(player.role, '👤') }}</div>
                         <h4 class="fw-bold text-white-50 text-uppercase tracking-wider">{{ player.role }}</h4>
                     </div>
-                    <div class="col-8 p-4 d-flex flex-column justify-content-center position-relative">
-                        <div class="position-absolute top-0 end-0 p-4 pt-5 pe-5">
-                            <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow 
-                                {% if player.rating >= 90 %}bg-warning text-dark
-                                {% elif player.rating >= 80 %}bg-primary
-                                {% else %}bg-secondary{% endif %}" 
-                                style="width: 80px; height: 80px; font-size: 2.2rem; border: 4px solid rgba(255,255,255,0.2);">
-                                {{ player.rating }}
+                    <div class="col-8 p-4 d-flex flex-column justify-content-center">
+                        <div class="d-flex justify-content-between align-items-start gap-3 w-100 mb-3" style="min-width: 0;">
+                            <!-- Left Region: Name & Price -->
+                            <div class="d-flex flex-column" style="min-width: 0; flex: 1;">
+                                <h1 class="display-4 fw-900 text-white mb-0 player-name-marquee" style="line-height: 1.1;">{{ player.name }}</h1>
+                                <p class="text-muted fs-5 fw-bold mt-2 mb-0">Base Price: <span class="text-white">{{ (player.base_price * 10000000)|format_money }}</span></p>
+                            </div>
+                            
+                            <!-- Right Region: Badges -->
+                            <div class="d-flex flex-column align-items-end gap-2 flex-shrink-0">
+                                <span class="badge bg-warning text-dark fs-6 shadow"><i class="bi bi-star-fill me-1"></i>{{ player.tier or 'Unassigned' }}</span>
+                                <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow 
+                                    {% if player.rating >= 90 %}bg-warning text-dark
+                                    {% elif player.rating >= 80 %}bg-primary
+                                    {% else %}bg-secondary{% endif %}" 
+                                    style="width: 70px; height: 70px; font-size: 2rem; border: 3px solid rgba(255,255,255,0.2);">
+                                    {{ player.rating }}
+                                </div>
                             </div>
                         </div>
-                        <h1 class="display-4 fw-900 text-white mb-0" style="line-height: 1.1;">{{ player.name }}</h1>
-                        <p class="text-muted fs-5 fw-bold mb-4">Base Price: <span class="text-white">₹{{ player.base_price }} Cr</span></p>
                         
-                        <div class="d-flex gap-3">
+                        <div class="d-flex gap-3 flex-wrap mt-2">
                             <div class="bg-dark rounded p-3 border border-secondary flex-grow-1">
                                 <small class="text-muted fw-bold d-block text-uppercase">AI Expected</small>
-                                <h5 class="mb-0 text-success fw-bold">₹{{ "%.2f"|format(min_price|default(0)) }} - ₹{{ "%.2f"|format(max_price|default(0)) }} Cr</h5>
+                                <h5 class="mb-0 text-success fw-bold">{{ (min_price|default(0) * 10000000)|format_money }} - {{ (max_price|default(0) * 10000000)|format_money }}</h5>
                             </div>
                             <div class="bg-dark rounded p-3 border border-secondary flex-grow-1">
                                 <small class="text-muted fw-bold d-block text-uppercase">Your Max Budget</small>
-                                <h5 class="mb-0 text-white fw-bold">₹{{ "%.2f"|format(max_bid_allowed) }} Cr</h5>
+                                <h5 class="mb-0 text-white fw-bold" id="your_max_budget">{{ (max_bid_allowed * 10000000)|format_money }}</h5>
                             </div>
                         </div>
                     </div>
@@ -141,7 +168,7 @@
                 
                 <div class="py-5 mt-4">
                     <small class="text-white-50 fw-bold d-block text-uppercase letter-spacing-2 mb-2">Current Bid</small>
-                    <h1 class="display-1 fw-900 text-success mb-2" id="current_bid_display_1" style="font-size: 6rem; text-shadow: 0 0 20px rgba(16, 185, 129, 0.4);">₹{{ current_bid }} Cr</h1>
+                    <h1 class="display-1 fw-900 text-success mb-2" id="current_bid_display_1" style="font-size: 6rem; text-shadow: 0 0 20px rgba(16, 185, 129, 0.4);">{{ (current_bid * 10000000)|format_money }}</h1>
                     
                     <div id="highest_bidder_header_container_2" class="mt-4" style="height: 60px;">
                         {% if highest_bidder %}
@@ -157,27 +184,27 @@
                 <!-- Controls -->
                 <div id="bid_controls_container" class="mt-2 border-top border-secondary pt-4">
                     {% if auction_state in ['OPEN', 'GOING_ONCE', 'GOING_TWICE', 'FINAL_CALL'] %}
-                    <form method="POST" class="d-flex gap-3 justify-content-center px-4">
+                    <div class="d-flex gap-3 justify-content-center px-4" id="bid_buttons_wrapper">
                         {% if highest_bidder == selected_team %}
                             <button type="button" class="btn btn-secondary btn-lg flex-grow-1 fw-bold fs-3" disabled style="height: 80px;">
                                 <i class="bi bi-hourglass-split me-2"></i> LEADING
                             </button>
                         {% else %}
-                            <button type="submit" formaction="/bid/v2" class="btn btn-success btn-lg flex-grow-1 fw-bold fs-3 shadow-lg border border-2 border-white" style="height: 80px;">
+                            <button type="button" id="btn-raise-bid" onclick="submitBid('bid')" class="btn btn-success btn-lg flex-grow-1 fw-bold fs-3 shadow-lg border border-2 border-white" style="height: 80px;">
                                 <i class="bi bi-caret-up-fill me-2"></i> RAISE BID
                             </button>
                         {% endif %}
-                        <button type="submit" formaction="/pass/v2" class="btn btn-danger btn-lg px-5 fw-bold fs-4 shadow-lg border border-2 border-white" style="height: 80px;">
+                        <button type="button" id="btn-pass" onclick="submitBid('pass')" class="btn btn-danger btn-lg px-5 fw-bold fs-4 shadow-lg border border-2 border-white" style="height: 80px;">
                             PASS
                         </button>
-                    </form>
+                    </div>
                     {% set increment = 0.1 %}
                     {% if current_bid >= 10.0 %}{% set increment = 2.0 %}
                     {% elif current_bid >= 2.0 %}{% set increment = 1.0 %}
                     {% elif current_bid >= 1.0 %}{% set increment = 0.2 %}
                     {% endif %}
                     <div class="text-center mt-3 text-white-50 small fw-bold">
-                        Next bid: ₹{{ "%.2f"|format(current_bid + increment) }} Cr
+                        Next bid: {{ ((current_bid + increment) * 10000000)|format_money }}
                     </div>
                     {% endif %}
                 </div>
@@ -235,16 +262,26 @@
             <!-- Team Logo Wall -->
             <div class="studio-card rounded-4 p-3 shadow-lg" id="interested_teams_container">
                 <h6 class="fw-bold mb-3 text-white-50 text-uppercase tracking-widest text-center border-bottom border-secondary pb-2">Franchise Desk</h6>
+                {% if not teams or teams|length == 0 %}
+                    <div class="text-center py-4 text-warning">
+                        <i class="bi bi-exclamation-triangle fs-1 d-block mb-2"></i>
+                        <strong>No franchises initialized.</strong><br>
+                        Run Team Seeder in Admin Panel.
+                    </div>
+                {% else %}
                 <div class="row row-cols-5 justify-content-center g-2 text-center">
-                    {% for t in all_teams %}
+                    {% for t in teams %}
                         {% set is_active = t.team_name in interested_teams %}
                         {% set is_leading = t.team_name == highest_bidder %}
+                        {% set is_winner = (auction_state == 'SOLD' and t.team_name == highest_bidder) %}
+                        {% set is_passed = (not is_active and not is_leading and not is_winner) %}
                         {% set is_human = t.team_name == selected_team %}
                         
                         <div class="col position-relative">
-                            <div class="team-logo-wall rounded bg-dark border border-secondary p-2 {% if is_leading %}leading{% elif is_active %}active{% endif %}" title="{{ t.team_name }}">
+                            <div class="team-logo-wall rounded bg-dark border border-secondary p-2 {% if is_winner %}winner{% elif is_leading %}leading{% elif is_passed %}passed{% endif %}" title="{{ t.team_name }}">
                                 <img src="{{ url_for('static', filename=TEAM_LOGOS.get(t.team_name, 'images/teams/mi.png')) }}" class="img-fluid rounded-circle bg-white shadow-sm mb-1" style="max-width: 40px; height: 40px;">
-                                <div class="text-white fw-bold font-monospace" style="font-size: 0.65rem;">₹{{ "%.1f"|format(t.budget) }}</div>
+                                <div class="text-white fw-bold font-monospace mt-1" style="font-size: 0.65rem;">{{ (t.budget * 10000000)|format_money }}</div>
+                                <div class="text-muted" style="font-size: 0.6rem;">{{ squad_counts.get(t.team_name, 0) }}/15 <i class="bi bi-people-fill"></i></div>
                             </div>
                             {% if is_human %}
                             <div class="position-absolute top-0 end-0 translate-middle badge rounded-pill bg-primary" style="font-size: 0.5rem; z-index:5;">YOU</div>
@@ -252,7 +289,24 @@
                         </div>
                     {% endfor %}
                 </div>
+                {% endif %}
             </div>
+
+            <!-- Admin Control Panel -->
+            {% if session.get('is_admin') %}
+            <div class="studio-card rounded-4 p-3 shadow-lg mt-3" id="admin_controls_container">
+                <h6 class="fw-bold mb-3 text-white-50 text-uppercase tracking-widest text-center border-bottom border-secondary pb-2"><i class="bi bi-shield-lock-fill text-primary me-2"></i>Director Controls</h6>
+                <div class="d-flex flex-wrap gap-2 justify-content-center">
+                    {% if auction_state == 'PAUSED' %}
+                        <button type="button" onclick="adminAction('resume')" class="btn btn-success fw-bold flex-grow-1"><i class="bi bi-play-fill me-1"></i>Resume</button>
+                    {% else %}
+                        <button type="button" onclick="adminAction('pause')" class="btn btn-warning fw-bold flex-grow-1"><i class="bi bi-pause-fill me-1"></i>Pause</button>
+                    {% endif %}
+                    <button type="button" onclick="adminAction('reset')" class="btn btn-danger fw-bold flex-grow-1"><i class="bi bi-arrow-counterclockwise me-1"></i>Reset</button>
+                    <button type="button" onclick="adminAction('end')" class="btn btn-outline-danger fw-bold flex-grow-1"><i class="bi bi-stop-circle-fill me-1"></i>End</button>
+                </div>
+            </div>
+            {% endif %}
 
         </div>
     </div>
@@ -266,9 +320,9 @@
                 {% set type = event.get('event_type', '') %}
                 {% set details = event.get('details', {}) %}
                 {% if type in ['BID', 'AI_BID'] %}
-                    <div class="ticker-item"><span class="text-info">{{ details.get('team_name') }}</span> BIDS <span class="text-success">₹{{ details.get('amount') }} CR</span> FOR {{ player.name }}</div>
+                    <div class="ticker-item"><span class="text-info">{{ details.get('team_name') }}</span> BIDS <span class="text-success">{{ (details.get('amount') * 10000000)|format_money }}</span> FOR {{ player.name }}</div>
                 {% elif type == 'SOLD' %}
-                    <div class="ticker-item"><span class="text-warning">SOLD!</span> {{ player.name }} TO {{ details.get('team_name') }} FOR ₹{{ details.get('amount') }} CR</div>
+                    <div class="ticker-item"><span class="text-warning">SOLD!</span> {{ player.name }} TO {{ details.get('team_name') }} FOR {{ (details.get('amount') * 10000000)|format_money }}</div>
                 {% elif type == 'UNSOLD' %}
                     <div class="ticker-item"><span class="text-danger">UNSOLD!</span> {{ player.name }} REMAINS UNSOLD</div>
                 {% endif %}
@@ -279,30 +333,107 @@
     </div>
 </div>
 
-<!-- Admin controls modal trigger hidden in corner for emergency -->
-<button class="btn btn-sm btn-dark position-fixed bottom-0 end-0 m-5 opacity-25" style="z-index: 2000;" data-bs-toggle="modal" data-bs-target="#adminModal"><i class="bi bi-gear"></i></button>
-
-<!-- Admin Modal -->
-<div class="modal fade" id="adminModal" tabindex="-1" data-bs-theme="dark">
-  <div class="modal-dialog">
-    <div class="modal-content bg-dark text-white border-secondary">
-      <div class="modal-header border-secondary">
-        <h5 class="modal-title">Director Controls</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body p-4 d-grid gap-3">
-          {% if auction_state == 'PAUSED' %}
-            <form method="POST" action="/auction/resume"><button type="submit" class="btn btn-success w-100 fw-bold">Resume Auction</button></form>
-          {% else %}
-            <form method="POST" action="/auction/pause"><button type="submit" class="btn btn-warning w-100 fw-bold">Pause Auction</button></form>
-          {% endif %}
-          <form method="POST" action="/auction/end"><button type="submit" class="btn btn-outline-danger w-100">Force End Auction</button></form>
-      </div>
-    </div>
-  </div>
-</div>
-
 <script>
+  function showToast(message) {
+      const toastHtml = `
+      <div class="toast align-items-center text-white bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+          <div class="toast-body fw-bold">${message}</div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+      </div>`;
+      let container = document.querySelector('.toast-container');
+      if (!container) {
+          container = document.createElement('div');
+          container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+          document.body.appendChild(container);
+      }
+      container.insertAdjacentHTML('beforeend', toastHtml);
+      setTimeout(() => {
+          if (container.lastElementChild) {
+              container.lastElementChild.classList.remove('show');
+              setTimeout(() => {
+                  if (container.lastElementChild) container.lastElementChild.remove();
+              }, 300);
+          }
+      }, 3000);
+  }
+
+  async function adminAction(action) {
+      console.log("Admin Action:", action);
+      const response = await fetch(`/auction/admin/${action}`, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          }
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+          showToast(data.message || `${action} successful`);
+      } else {
+          showToast(data.error || 'Action failed');
+      }
+  }
+  
+  function submitBid(action) {
+      const raiseBtn = document.getElementById('btn-raise-bid');
+      const passBtn = document.getElementById('btn-pass');
+      
+      if (raiseBtn) {
+          raiseBtn.disabled = true;
+          if (action === 'bid') raiseBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+      }
+      if (passBtn) {
+          passBtn.disabled = true;
+          if (action === 'pass') passBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+      }
+      
+      console.log(`[BID] Request received for action: ${action}`);
+      
+      fetch(`/${action}/v2`, { method: 'POST' })
+          .then(response => response.json())
+          .then(data => {
+              console.log("[BID] Response received:", data);
+              if (data.error) {
+                  alert(data.error);
+                  if (raiseBtn) {
+                      raiseBtn.disabled = false;
+                      raiseBtn.innerHTML = '<i class="bi bi-caret-up-fill me-2"></i> RAISE BID';
+                  }
+                  if (passBtn) {
+                      passBtn.disabled = false;
+                      passBtn.innerHTML = 'PASS';
+                  }
+              } else {
+                  // The polling logic will automatically fetch the new state and re-render.
+                  // Wait for the next poll cycle.
+              }
+          })
+          .catch(error => {
+              console.error("[BID] Error:", error);
+              alert("Network error processing bid.");
+              if (raiseBtn) {
+                  raiseBtn.disabled = false;
+                  raiseBtn.innerHTML = '<i class="bi bi-caret-up-fill me-2"></i> RAISE BID';
+              }
+              if (passBtn) {
+                  passBtn.disabled = false;
+                  passBtn.innerHTML = 'PASS';
+              }
+          });
+  }
+  function formatMoney(rawValue) {
+      if (rawValue >= 10000000) {
+          return "₹" + (rawValue / 10000000).toFixed(2) + " Cr";
+      } else if (rawValue >= 100000) {
+          return "₹" + (rawValue / 100000).toFixed(2) + " Lakh";
+      } else {
+          return "₹" + rawValue;
+      }
+  }
+
   let lastBid = {{ current_bid }};
   let lastState = "{{ auction_state }}";
   let currentPlayer = "{{ player.name }}";
@@ -324,12 +455,18 @@
             return;
         }
         
+        // Update MAX Budget live
+        const maxBudgetEl = document.getElementById("your_max_budget");
+        if (maxBudgetEl && data.max_bid_allowed !== undefined) {
+            maxBudgetEl.innerText = formatMoney(data.max_bid_allowed * 10000000);
+        }
+        
         // Check for SOLD/UNSOLD animations
         if (data.auction_state === 'SOLD' && lastState !== 'SOLD') {
             const team = data.highest_bidder;
             const price = data.current_bid;
             document.getElementById('overlaySoldTeam').innerText = team;
-            document.getElementById('overlaySoldPrice').innerText = "₹" + price.toFixed(2) + " Cr";
+            document.getElementById('overlaySoldPrice').innerText = formatMoney(price * 10000000);
             
             // Hardcode known paths or fetch from an endpoint. For now assume static mapping
             const logos = {
@@ -370,6 +507,7 @@
                       'highest_bidder_header_container_2',
                       'bid_controls_container',
                       'interested_teams_container',
+                      'admin_controls_container',
                       'event_log_list',
                       'ticker_content'
                   ];

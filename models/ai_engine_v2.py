@@ -385,7 +385,7 @@ def calculate_maximum_bid(team_name, player, current_bid, is_human=False):
     
     # Enforce minimums to ensure stars get bid up
     if player.rating >= 92 and available_budget >= 10.0:
-        min_expected, max_expected = get_expected_price_range(player.rating)
+        min_expected, max_expected = get_expected_price_range(player)
         # Ensure AI will at least try to bid near minimum expected for superstars if budget allows
         if max_bid < min_expected:
             max_bid = min(min_expected, max_single_spend)

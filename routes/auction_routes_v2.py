@@ -208,6 +208,21 @@ def handle_auctioneer_countdown():
     auction = AuctionSession.query.filter_by(auction_id=session.get("auction_id", "")).first()
     if not auction:
         return
+        
+    # Prevent countdown on an active player if there are no bids yet
+    if not auction.highest_bidder and auction.current_bid > getattr(get_current_player(), 'base_price', 0):
+        # We shouldn't be counting down if nobody has bid at the current price,
+        # unless current_bid == base_price (which means nobody wants the player at base price)
+        # But wait, if nobody wants the player, they go unsold. That logic is fine.
+        # The bug is if current_bid > base_price but highest_bidder is None.
+        pass
+        
+    if not auction.highest_bidder and auction.current_bid > get_current_player().base_price:
+        # State corruption check: highest_bidder is None but bid is raised. Reset to OPEN.
+        auction.auction_state = "OPEN"
+        auction.countdown_started = None
+        db.session.commit()
+        return
     
     if not auction.countdown_started:
         auction.countdown_started = datetime.utcnow()
@@ -291,17 +306,26 @@ def process_auction_events():
                 import random
                 bidding_team = random.choice(valid_ai_teams)
                 increment = get_bid_increment(auction.current_bid)
+                
+                # Assign highest bidder BEFORE changing state
                 auction.current_bid = round(auction.current_bid + increment, 2)
                 auction.highest_bidder = bidding_team
                 auction.last_bid_timestamp = now
+                auction.countdown_started = None
+                auction.auction_state = "OPEN"
                 db.session.commit()
                 log_event("BID", {"team_name": bidding_team, "amount": auction.current_bid})
             else:
                 # No AI wants to bid. Start countdown.
-                auction.auction_state = "GOING_ONCE"
-                auction.countdown_started = now
-                db.session.commit()
-                log_event("GOING_ONCE")
+                # Do not start countdown if highest bidder is none and current_bid > base_price
+                if not auction.highest_bidder and auction.current_bid > player.base_price:
+                    auction.auction_state = "OPEN"
+                    db.session.commit()
+                else:
+                    auction.auction_state = "GOING_ONCE"
+                    auction.countdown_started = now
+                    db.session.commit()
+                    log_event("GOING_ONCE")
                 
     elif auction.auction_state in ["GOING_ONCE", "GOING_TWICE", "FINAL_CALL"]:
         handle_auctioneer_countdown()
@@ -412,12 +436,19 @@ def auction():
     teams = Team.query.order_by(Team.team_name).all()
     event_log = session.get("event_log", [])
     
-    # Calculate squad info
+    # Calculate squad info for all teams
+    all_squads = TeamSquad.query.all()
+    squad_counts = {}
+    for s in all_squads:
+        squad_counts[s.team_name] = squad_counts.get(s.team_name, 0) + 1
+        
     squad_composition = get_team_squad_composition(selected_team)
     squad_size = len(squad)
     
     from services.auction_set_manager import get_auction_set_name
+    from services.player_value_engine import get_expected_price_range
     set_name = get_auction_set_name(player)
+    min_price, max_price = get_expected_price_range(player)
     
     return render_template(
         "auction_v2.html",
@@ -428,9 +459,12 @@ def auction():
         auction_state=auction.auction_state,
         auction_stage=auction.auction_stage,
         set_name=set_name,
+        min_price=min_price,
+        max_price=max_price,
         team=team,
         squad_size=squad_size,
         squad_composition=squad_composition,
+        squad_counts=squad_counts,
         teams=teams,
         event_log=event_log,
         interested_teams=[t for t, _ in interested_teams],
@@ -452,17 +486,14 @@ def bid():
         return jsonify({"error": "Invalid auction state"}), 400
         
     if auction.auction_state == "PAUSED":
-        flash("Auction is paused by admin.", "warning")
-        return redirect(url_for("auction_bp_v2.auction"))
+        return jsonify({"error": "Auction is paused by admin."}), 400
         
     if auction.highest_bidder == selected_team:
-        flash("You are already the highest bidder.", "warning")
-        return redirect(url_for("auction_bp_v2.auction"))
+        return jsonify({"error": "You are already the highest bidder."}), 400
         
     team_squad_count = TeamSquad.query.filter_by(team_name=selected_team).count()
     if team_squad_count >= 15:
-        flash("Your squad is full (Max 15 players allowed).", "danger")
-        return redirect(url_for("auction_bp_v2.auction"))
+        return jsonify({"error": "Your squad is full (Max 15 players allowed)."}), 400
     
     # Check constraints
     max_bid = calculate_maximum_bid(selected_team, player, auction.current_bid, is_human=True)
@@ -470,13 +501,11 @@ def bid():
     next_bid = round(auction.current_bid + increment, 2)
     
     if next_bid > max_bid:
-        flash("You cannot bid beyond your maximum allowed bid for this player.", "warning")
-        return redirect(url_for("auction_bp_v2.auction"))
+        return jsonify({"error": "You cannot bid beyond your maximum allowed bid for this player."}), 400
     
     team = Team.query.filter_by(team_name=selected_team).first()
     if not team or next_bid > team.budget:
-        flash("Insufficient budget to raise the bid.", "danger")
-        return redirect(url_for("auction_bp_v2.auction"))
+        return jsonify({"error": "Insufficient budget to raise the bid."}), 400
     
     # Place bid
     auction.current_bid = next_bid
@@ -488,7 +517,7 @@ def bid():
     
     log_event("BID", {"team_name": selected_team, "amount": next_bid})
     
-    return redirect(url_for("auction_bp_v2.auction"))
+    return jsonify({"success": True, "message": "Bid placed successfully", "current_bid": next_bid})
 
 
 @auction_bp_v2.route("/pass/v2", methods=["POST"])
@@ -504,8 +533,7 @@ def pass_bid():
         return jsonify({"error": "Invalid auction state"}), 400
         
     if auction.auction_state == "PAUSED":
-        flash("Auction is paused by admin.", "warning")
-        return redirect(url_for("auction_bp_v2.auction"))
+        return jsonify({"error": "Auction is paused by admin."}), 400
     
     # Mark team as passed
     passed_teams = json.loads(auction.teams_passed) if auction.teams_passed else []
@@ -530,7 +558,7 @@ def pass_bid():
         auction.auction_state = "OPEN"
         db.session.commit()
     
-    return redirect(url_for("auction_bp_v2.auction"))
+    return jsonify({"success": True, "message": "Passed on player"})
 
 
 @auction_bp_v2.route("/squad/v2")
@@ -593,39 +621,51 @@ def get_auction_state():
         "highest_bidder": auction.highest_bidder,
         "auction_state": auction.auction_state,
         "remaining_budget": team.budget if team else 0,
+        "max_bid_allowed": calculate_maximum_bid(selected_team, player, auction.current_bid, is_human=True),
         "countdown_elapsed": (datetime.utcnow() - auction.countdown_started).total_seconds() if auction.countdown_started else 0,
         "recent_events": event_log,
         "interested_teams": interested_list
     })
 
-@auction_bp_v2.route("/auction/pause", methods=["POST"])
+@auction_bp_v2.route("/auction/admin/pause", methods=["POST"])
 def pause_auction():
+    print("[ADMIN] pause requested")
+    if not session.get("is_admin"):
+        return jsonify({"success": False, "error": "Forbidden"}), 403
     auction = AuctionSession.query.filter_by(auction_id=session.get("auction_id", "")).first()
     if auction:
         auction.auction_state = "PAUSED"
         auction.countdown_started = None
         db.session.commit()
         log_event("SYSTEM", {"details": "Auction Paused By Admin"})
-    return redirect(url_for("auction_bp_v2.auction"))
+        return jsonify({"success": True})
+    return jsonify({"error": "No active auction"}), 400
 
-@auction_bp_v2.route("/auction/resume", methods=["POST"])
+@auction_bp_v2.route("/auction/admin/resume", methods=["POST"])
 def resume_auction():
+    print("[ADMIN] resume requested")
+    if not session.get("is_admin"):
+        return jsonify({"success": False, "error": "Forbidden"}), 403
     auction = AuctionSession.query.filter_by(auction_id=session.get("auction_id", "")).first()
     if auction and auction.auction_state == "PAUSED":
         auction.auction_state = "OPEN"
         auction.last_bid_timestamp = datetime.utcnow()
         db.session.commit()
         log_event("SYSTEM", {"details": "Auction Resumed By Admin"})
-    return redirect(url_for("auction_bp_v2.auction"))
+        return jsonify({"success": True})
+    return jsonify({"error": "Auction not paused"}), 400
 
-@auction_bp_v2.route("/auction/end", methods=["POST"])
+@auction_bp_v2.route("/auction/admin/end", methods=["POST"])
 def end_auction():
+    print("[ADMIN] end requested")
+    if not session.get("is_admin"):
+        return jsonify({"success": False, "error": "Forbidden"}), 403
     auction = AuctionSession.query.filter_by(auction_id=session.get("auction_id", "")).first()
     if auction:
         auction.auction_stage = "COMPLETED"
         db.session.commit()
     session["auction_finished"] = True
-    return redirect(url_for("auction_bp_v2.auction"))
+    return jsonify({"success": True})
 
 @auction_bp_v2.route("/auction/start_new", methods=["POST"])
 def start_new_auction():
@@ -643,37 +683,40 @@ def start_new_auction():
     initialize_auction_session()
     return redirect(url_for("auction_bp_v2.auction"))
 
-@auction_bp_v2.route("/auction/reset", methods=["POST"])
+@auction_bp_v2.route("/auction/admin/reset", methods=["POST"])
 def reset_auction():
+    print("[ADMIN] reset requested")
+    if not session.get("is_admin"):
+        return jsonify({"success": False, "error": "Forbidden"}), 403
     auction_id = session.get("auction_id", "")
     if auction_id:
-        TeamSquad.query.delete()
-        for team in Team.query.all():
-            team.budget = 120.0
-        for player in Player.query.all():
-            player.status = "available"
-            player.sold_price = 0
-            player.sold_to = None
-            
         auction = AuctionSession.query.filter_by(auction_id=auction_id).first()
         if auction:
-            auction.auction_stage = "ROUND_1"
-            auction.auction_state = "OPEN"
-            auction.highest_bidder = None
-            first_player = Player.query.filter_by(status="available").order_by(Player.rating.desc(), Player.base_price.desc()).first()
-            if first_player:
-                auction.current_player_id = first_player.id
-                auction.current_bid = first_player.base_price
-            auction.countdown_started = None
-            auction.teams_passed = ""
-            auction.teams_interested = ""
-            
-            player_ids = [p.id for p in Player.query.filter_by(status="available").order_by(Player.rating.desc(), Player.base_price.desc()).all()]
-            session["auction_player_ids"] = player_ids
-            session["current_index"] = 0
-            
-        db.session.commit()
-        session.pop("auction_finished", None)
-        flash("Current auction has been reset. Historical logs are preserved.", "success")
-    return redirect(url_for("auction_bp_v2.auction"))
+            player = get_current_player()
+            if player:
+                # Reset current player
+                auction.current_bid = player.base_price
+                auction.highest_bidder = None
+                auction.countdown_started = None
+                auction.auction_state = "OPEN"
+                auction.teams_passed = ""
+                auction.teams_interested = ""
+                db.session.commit()
+                log_event("SYSTEM", {"details": f"Auction state reset for {player.name}"})
+                return jsonify({"success": True})
+    return jsonify({"error": "Could not reset auction state"}), 400
+
+@auction_bp_v2.route("/auction/admin/next-player", methods=["POST"])
+def next_player_admin():
+    if not session.get("is_admin"):
+        return jsonify({"success": False, "error": "Forbidden"}), 403
+    advance_to_next_player()
+    return jsonify({"success": True})
+
+@auction_bp_v2.route("/auction/admin/refresh", methods=["POST"])
+def refresh_admin():
+    if not session.get("is_admin"):
+        return jsonify({"success": False, "error": "Forbidden"}), 403
+    # Force state reload by simply returning success
+    return jsonify({"success": True})
 
