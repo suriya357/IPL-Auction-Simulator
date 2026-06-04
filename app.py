@@ -18,6 +18,8 @@ def create_app():
         db_url or "sqlite:///database.db"
     )
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+    from models.auction_session import AuctionSession
     from models.player import Player
     from models.team import Team
     from models.auction import AuctionResult, AuctionEventLog, User
@@ -25,6 +27,23 @@ def create_app():
     db.init_app(app)
     with app.app_context():
         db.create_all()
+
+    admin = User.query.filter_by(username="admin").first()
+
+    if not admin:
+        admin = User()
+
+        admin.username = "admin"
+        admin.role = "admin"
+
+        admin.set_password(
+            os.environ.get("ADMIN_PASSWORD", "admin123")
+        )
+
+        db.session.add(admin)
+        db.session.commit()
+
+        print("Default admin created.")
 
     from routes.admin_routes import admin_bp
     from routes.team_routes import team_bp
