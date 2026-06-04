@@ -19,12 +19,6 @@ def create_app():
     )
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     
-    from models.player import Player
-    from models.team import Team
-    from models.squad import Squad
-    from models.auction import AuctionResult
-    from models.auction import AuctionEventLog
-    from models.auction import User
     db.init_app(app)
     with app.app_context():
         db.create_all()
