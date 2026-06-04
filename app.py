@@ -8,19 +8,23 @@ def create_app():
     app = Flask(__name__)
     app.secret_key = os.environ.get("SECRET_KEY", "devsecret123")
     
-    # Database Abstraction
+    # Database Configuration
     db_url = os.environ.get("DATABASE_URL")
+
     if db_url and db_url.startswith("postgres://"):
         db_url = db_url.replace("postgres://", "postgresql://", 1)
-        
-    local_db_path = "sqlite:///" + os.path.join(os.path.abspath(os.path.dirname(__file__)), "database.db")
+
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    local_db_path = f"sqlite:///{os.path.join(basedir, 'database.db')}"
+
     app.config["SQLALCHEMY_DATABASE_URI"] = db_url or local_db_path
-    
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["SESSION_COOKIE_HTTPONLY"] = True
     app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
     db.init_app(app)
+    with app.app_context():
+        db.create_all()
 
     from routes.admin_routes import admin_bp
     from routes.team_routes import team_bp
