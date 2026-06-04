@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}Player Details: {{ player.name }}{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{{ request.referrer or '/admin/player-tiers' }}" class="text-decoration-none text-muted"><i class="bi bi-arrow-left me-1"></i> Back</a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-lg border-0 hover-lift overflow-hidden">
+            <div class="row g-0">
+                <div class="col-md-5 bg-dark text-white d-flex flex-column justify-content-center align-items-center py-5 position-relative">
+                    <i class="bi bi-person-bounding-box opacity-25" style="font-size: 10rem; position: absolute;"></i>
+                    <div style="z-index: 1;" class="text-center">
+                        <div class="display-1 mb-2">{{ ROLE_ICONS.get(player.role, '👤') }}</div>
+                        <h4 class="fw-bold">{{ player.role }}</h4>
+                    </div>
+                </div>
+                <div class="col-md-7">
+                    <div class="card-body p-5 position-relative">
+                        <div class="position-absolute top-0 end-0 p-4">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow 
+                                {% if player.rating >= 90 %}bg-warning text-dark
+                                {% elif player.rating >= 80 %}bg-primary
+                                {% else %}bg-secondary{% endif %}" 
+                                style="width: 70px; height: 70px; font-size: 1.8rem; border: 3px solid white;">
+                                {{ player.rating }}
+                            </div>
+                        </div>
+                        
+                        <h1 class="fw-bold mb-1">{{ player.name }}</h1>
+                        <p class="text-muted fw-bold mb-3">Base Price: ₹{{ player.base_price }} Cr</p>
+                        
+                        {% if player.status == 'available' %}
+                            <span class="badge bg-success mb-4 fs-6 px-3 py-2"><i class="bi bi-check-circle-fill me-1"></i> Available</span>
+                        {% elif player.status == 'sold' %}
+                            <span class="badge bg-primary mb-4 fs-6 px-3 py-2"><i class="bi bi-cash-coin me-1"></i> Sold</span>
+                        {% elif player.status == 'unsold' %}
+                            <span class="badge bg-danger mb-4 fs-6 px-3 py-2"><i class="bi bi-x-circle-fill me-1"></i> Unsold</span>
+                        {% elif player.status == 'accelerated' %}
+                            <span class="badge bg-warning text-dark mb-4 fs-6 px-3 py-2"><i class="bi bi-lightning-charge-fill me-1"></i> Accelerated Round</span>
+                        {% endif %}
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-12">
+                                <ul class="list-group list-group-flush border-top">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                                        <span class="text-muted fw-bold small text-uppercase">Tier</span>
+                                        <span class="fw-bold">{{ player.tier or 'Unassigned' }} {% if player.manual_tier_lock %}<i class="bi bi-lock-fill text-warning ms-1" title="Manually Locked"></i>{% endif %}</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                                        <span class="text-muted fw-bold small text-uppercase">Auction Set</span>
+                                        <span class="fw-bold">{{ player.auction_set or 'Unassigned' }} {% if player.manual_set_lock %}<i class="bi bi-lock-fill text-warning ms-1" title="Manually Locked"></i>{% endif %}</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                                        <span class="text-muted fw-bold small text-uppercase">AI Expected Range</span>
+                                        <span class="fw-bold text-success">₹{{ "%.2f"|format(min_price) }} Cr - ₹{{ "%.2f"|format(max_price) }} Cr</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        {% if player.status == 'sold' %}
+                        <div class="bg-light rounded p-4 border border-primary border-2 text-center">
+                            <small class="text-muted fw-bold d-block mb-2 text-uppercase">Winning Team</small>
+                            <img src="{{ url_for('static', filename=TEAM_LOGOS.get(player.sold_to, 'images/teams/mi.png')) }}" class="team-logo-small mb-2 rounded-circle shadow-sm">
+                            <h4 class="fw-bold mb-1" style="color: {{ TEAM_THEME.get(player.sold_to, {}).get('primary', '#1D4ED8') }}">{{ player.sold_to }}</h4>
+                            <h3 class="mb-0 fw-900 text-success">₹{{ player.sold_price }} Cr</h3>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% block title %}Team Comparison Center{% endblock %}
+
+{% block content %}
+<div class="container py-4 animated-fade-in">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="fw-bold"><i class="bi bi-intersect text-primary me-2"></i>Team <span class="text-success">Comparison</span> Center</h1>
+        <a href="/dashboard/v2" class="btn btn-outline-secondary shadow-sm">← Back</a>
+    </div>
+
+    <!-- SELECTION FORM -->
+    <div class="card glass-card shadow-sm border-0 mb-5">
+        <div class="card-body p-4">
+            <form method="POST" class="row g-3 align-items-end justify-content-center">
+                <div class="col-md-4 text-center">
+                    <label class="form-label fw-bold text-uppercase text-muted mb-3">Team A</label>
+                    <select name="team_a" class="form-select form-select-lg shadow-sm" required>
+                        <option value="">Select Team...</option>
+                        {% for team in teams %}
+                        <option value="{{ team }}">{{ team }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2 text-center pb-2">
+                    <span class="badge bg-dark rounded-circle p-3 fs-5 shadow">VS</span>
+                </div>
+                <div class="col-md-4 text-center">
+                    <label class="form-label fw-bold text-uppercase text-muted mb-3">Team B</label>
+                    <select name="team_b" class="form-select form-select-lg shadow-sm" required>
+                        <option value="">Select Team...</option>
+                        {% for team in teams %}
+                        <option value="{{ team }}">{{ team }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-12 mt-4 text-center">
+                    <button type="submit" class="btn btn-success btn-lg px-5 rounded-pill shadow fw-bold"><i class="bi bi-bar-chart-steps me-2"></i> COMPARE TEAMS</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- COMPARISON RESULTS -->
+    {% if comparison %}
+    {% set a = comparison.a %}
+    {% set b = comparison.b %}
+    {% set c_a = TEAM_THEME.get(a.name, {}).get('primary', '#1D4ED8') %}
+    {% set c_b = TEAM_THEME.get(b.name, {}).get('primary', '#1D4ED8') %}
+    
+    <div class="row g-4 mb-5">
+        <!-- TEAM A HEADER -->
+        <div class="col-md-6">
+            <div class="card glass-card border-0 shadow text-center p-4 h-100" style="border-top: 5px solid {{ c_a }} !important;">
+                <img src="{{ url_for('static', filename=TEAM_LOGOS.get(a.name, 'images/teams/mi.png')) }}" class="team-logo-large mx-auto mb-3 rounded-circle shadow-sm" style="background: {{ c_a }}">
+                <h3 class="fw-bold mb-0" style="color: {{ c_a }}">{{ a.name }}</h3>
+            </div>
+        </div>
+        <!-- TEAM B HEADER -->
+        <div class="col-md-6">
+            <div class="card glass-card border-0 shadow text-center p-4 h-100" style="border-top: 5px solid {{ c_b }} !important;">
+                <img src="{{ url_for('static', filename=TEAM_LOGOS.get(b.name, 'images/teams/mi.png')) }}" class="team-logo-large mx-auto mb-3 rounded-circle shadow-sm" style="background: {{ c_b }}">
+                <h3 class="fw-bold mb-0" style="color: {{ c_b }}">{{ b.name }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="card glass-card border-0 shadow-lg overflow-hidden">
+        <div class="card-header bg-dark text-white text-center py-3">
+            <h5 class="mb-0 fw-bold text-uppercase letter-spacing-1">Head-to-Head Metrics</h5>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0 text-center align-middle" style="font-size: 1.1rem;">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 33%; color: {{ c_a }}" class="fw-bold py-3 fs-5">{{ TEAM_THEME.get(a.name, {}).get('short', a.name) }}</th>
+                        <th style="width: 33%" class="text-muted text-uppercase py-3">Metric</th>
+                        <th style="width: 33%; color: {{ c_b }}" class="fw-bold py-3 fs-5">{{ TEAM_THEME.get(b.name, {}).get('short', b.name) }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Budget -->
+                    <tr>
+                        <td class="fw-bold {% if a.budget > b.budget %}text-success bg-success bg-opacity-10{% elif a.budget < b.budget %}text-danger{% else %}text-muted{% endif %}">₹{{ "%.2f"|format(a.budget) }} Cr</td>
+                        <td class="fw-bold text-secondary bg-light">Remaining Budget</td>
+                        <td class="fw-bold {% if b.budget > a.budget %}text-success bg-success bg-opacity-10{% elif b.budget < a.budget %}text-danger{% else %}text-muted{% endif %}">₹{{ "%.2f"|format(b.budget) }} Cr</td>
+                    </tr>
+                    
+                    <!-- Squad Size -->
+                    <tr>
+                        <td class="fw-bold {% if a.squad_size > b.squad_size %}text-success bg-success bg-opacity-10{% elif a.squad_size < b.squad_size %}text-danger{% else %}text-muted{% endif %}">{{ a.squad_size }} / 25</td>
+                        <td class="fw-bold text-secondary bg-light">Squad Size</td>
+                        <td class="fw-bold {% if b.squad_size > a.squad_size %}text-success bg-success bg-opacity-10{% elif b.squad_size < a.squad_size %}text-danger{% else %}text-muted{% endif %}">{{ b.squad_size }} / 25</td>
+                    </tr>
+
+                    <!-- Average Rating -->
+                    <tr>
+                        <td class="fw-bold fs-5 {% if a.avg_rating > b.avg_rating %}text-success bg-success bg-opacity-10{% elif a.avg_rating < b.avg_rating %}text-danger{% else %}text-muted{% endif %}">{{ "%.1f"|format(a.avg_rating) }}</td>
+                        <td class="fw-bold text-secondary bg-light">Average Rating</td>
+                        <td class="fw-bold fs-5 {% if b.avg_rating > a.avg_rating %}text-success bg-success bg-opacity-10{% elif b.avg_rating < a.avg_rating %}text-danger{% else %}text-muted{% endif %}">{{ "%.1f"|format(b.avg_rating) }}</td>
+                    </tr>
+
+                    <!-- Best XI Rating -->
+                    <tr>
+                        <td class="fw-bold fs-5 {% if a.xi_rating > b.xi_rating %}text-success bg-success bg-opacity-10{% elif a.xi_rating < b.xi_rating %}text-danger{% else %}text-muted{% endif %}">{{ "%.1f"|format(a.xi_rating) }}</td>
+                        <td class="fw-bold text-secondary bg-light"><i class="bi bi-trophy text-warning me-1"></i> Best XI Rating</td>
+                        <td class="fw-bold fs-5 {% if b.xi_rating > a.xi_rating %}text-success bg-success bg-opacity-10{% elif b.xi_rating < a.xi_rating %}text-danger{% else %}text-muted{% endif %}">{{ "%.1f"|format(b.xi_rating) }}</td>
+                    </tr>
+
+                    <!-- Batters -->
+                    <tr>
+                        <td class="fw-bold {% if a.batters > b.batters %}text-success bg-success bg-opacity-10{% elif a.batters < b.batters %}text-danger{% else %}text-muted{% endif %}">{{ a.batters }}</td>
+                        <td class="fw-bold text-secondary bg-light"><i class="bi bi-activity text-primary me-1"></i> Batters</td>
+                        <td class="fw-bold {% if b.batters > a.batters %}text-success bg-success bg-opacity-10{% elif b.batters < a.batters %}text-danger{% else %}text-muted{% endif %}">{{ b.batters }}</td>
+                    </tr>
+
+                    <!-- Bowlers -->
+                    <tr>
+                        <td class="fw-bold {% if a.bowlers > b.bowlers %}text-success bg-success bg-opacity-10{% elif a.bowlers < b.bowlers %}text-danger{% else %}text-muted{% endif %}">{{ a.bowlers }}</td>
+                        <td class="fw-bold text-secondary bg-light"><i class="bi bi-record-circle text-danger me-1"></i> Bowlers</td>
+                        <td class="fw-bold {% if b.bowlers > a.bowlers %}text-success bg-success bg-opacity-10{% elif b.bowlers < a.bowlers %}text-danger{% else %}text-muted{% endif %}">{{ b.bowlers }}</td>
+                    </tr>
+
+                    <!-- All-Rounders -->
+                    <tr>
+                        <td class="fw-bold {% if a.all_rounders > b.all_rounders %}text-success bg-success bg-opacity-10{% elif a.all_rounders < b.all_rounders %}text-danger{% else %}text-muted{% endif %}">{{ a.all_rounders }}</td>
+                        <td class="fw-bold text-secondary bg-light"><i class="bi bi-lightning text-warning me-1"></i> All-Rounders</td>
+                        <td class="fw-bold {% if b.all_rounders > a.all_rounders %}text-success bg-success bg-opacity-10{% elif b.all_rounders < a.all_rounders %}text-danger{% else %}text-muted{% endif %}">{{ b.all_rounders }}</td>
+                    </tr>
+
+                    <!-- Wicket Keepers -->
+                    <tr>
+                        <td class="fw-bold {% if a.wks > b.wks %}text-success bg-success bg-opacity-10{% elif a.wks < b.wks %}text-danger{% else %}text-muted{% endif %}">{{ a.wks }}</td>
+                        <td class="fw-bold text-secondary bg-light"><i class="bi bi-person-badge text-info me-1"></i> Wicket Keepers</td>
+                        <td class="fw-bold {% if b.wks > a.wks %}text-success bg-success bg-opacity-10{% elif b.wks < a.wks %}text-danger{% else %}text-muted{% endif %}">{{ b.wks }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

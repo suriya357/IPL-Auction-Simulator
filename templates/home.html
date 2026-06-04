@@ -1,0 +1,248 @@
+{% extends 'base.html' %}
+
+{% block title %}IPL Auction Simulator{% endblock %}
+
+{% block content %}
+<!-- SECTION 1: HERO -->
+<div class="position-relative overflow-hidden p-5 p-md-5 m-md-3 text-center rounded-5 shadow-lg border border-primary glass-card mb-5 animated-fade-in" style="background: radial-gradient(circle, #0A2540 0%, #000000 100%);">
+    <div class="col-md-8 mx-auto my-5 text-white">
+        <h1 class="display-3 fw-bold mb-3"><i class="bi bi-hammer text-primary me-3"></i>IPL Auction <span class="text-primary">Simulator</span></h1>
+        <h3 class="fw-light mb-4">AI Powered IPL Mega Auction Platform</h3>
+        <p class="lead mb-5 text-white-50">
+            Simulate realistic IPL auctions with AI franchises, analytics dashboards, winner prediction, best XI generation, and season simulation.
+        </p>
+        <div class="d-flex justify-content-center gap-3">
+            <a class="btn btn-primary btn-lg shadow-lg px-4 rounded-pill fw-bold" href="/select-team"><i class="bi bi-play-circle-fill me-2"></i> Start Auction</a>
+            <a class="btn btn-outline-light btn-lg px-4 rounded-pill fw-bold" href="/dashboard/v2"><i class="bi bi-bar-chart-fill me-2"></i> Analytics Dashboard</a>
+            <a class="btn btn-outline-info btn-lg px-4 rounded-pill fw-bold" href="/predictor"><i class="bi bi-magic me-2"></i> Winner Predictor</a>
+        </div>
+    </div>
+</div>
+
+<!-- SECTION 2: LIVE AUCTION METRICS -->
+<div class="container mb-5">
+    <div class="row g-4 text-center">
+        <div class="col-md-2 col-6">
+            <div class="card glass-card hover-lift border-0 shadow-sm py-3">
+                <h6 class="text-muted text-uppercase mb-1">Players Sold</h6>
+                <h3 class="fw-bold mb-0 text-primary">{{ overview.total_sold if overview else 0 }}</h3>
+            </div>
+        </div>
+        <div class="col-md-2 col-6">
+            <div class="card glass-card hover-lift border-0 shadow-sm py-3">
+                <h6 class="text-muted text-uppercase mb-1">Unsold</h6>
+                <h3 class="fw-bold mb-0 text-secondary">{{ overview.total_unsold if overview else 0 }}</h3>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card glass-card hover-lift border-0 shadow-sm py-3">
+                <h6 class="text-muted text-uppercase mb-1">Total Spend</h6>
+                <h3 class="fw-bold mb-0 text-success">₹{{ "%.2f"|format(overview.total_spend) if overview else '0.00' }} Cr</h3>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card glass-card hover-lift border-0 shadow-sm py-3">
+                <h6 class="text-muted text-uppercase mb-1">Highest Purchase</h6>
+                <h3 class="fw-bold mb-0 text-danger">₹{{ "%.2f"|format(overview.most_expensive.sold_price) if overview and overview.most_expensive else '0.00' }} Cr</h3>
+            </div>
+        </div>
+        <div class="col-md-2 col-12">
+            <div class="card glass-card hover-lift border-0 shadow-sm py-3 h-100 bg-primary text-white d-flex align-items-center justify-content-center">
+                <h6 class="text-uppercase mb-1 opacity-75">Status</h6>
+                <h4 class="fw-bold mb-0"><i class="bi bi-circle-fill text-danger me-2 blink"></i>LIVE</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SECTION 3: FEATURE GRID -->
+<div class="container mb-5">
+    <h3 class="fw-bold mb-4 border-bottom pb-2">Platform Features</h3>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card glass-card hover-lift border-0 shadow-sm h-100 text-center p-4">
+                <i class="bi bi-hammer display-4 text-primary mb-3"></i>
+                <h5 class="fw-bold">Live AI Auction</h5>
+                <p class="text-muted mb-0">Bid against intelligent AI franchises that use dynamic bidding logic and interest scores.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card glass-card hover-lift border-0 shadow-sm h-100 text-center p-4">
+                <i class="bi bi-trophy-fill display-4 text-warning mb-3"></i>
+                <h5 class="fw-bold">Best XI Generator</h5>
+                <p class="text-muted mb-0">Automatically construct the most balanced Playing XI based on roles and ratings.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card glass-card hover-lift border-0 shadow-sm h-100 text-center p-4">
+                <i class="bi bi-magic display-4 text-info mb-3"></i>
+                <h5 class="fw-bold">Winner Predictor</h5>
+                <p class="text-muted mb-0">Advanced algorithms predict championship odds and league table rankings.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card glass-card hover-lift border-0 shadow-sm h-100 text-center p-4">
+                <i class="bi bi-play-circle-fill display-4 text-danger mb-3"></i>
+                <h5 class="fw-bold">Season Simulator</h5>
+                <p class="text-muted mb-0">Run 1000+ Monte Carlo simulations to see who dominates over time.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card glass-card hover-lift border-0 shadow-sm h-100 text-center p-4">
+                <i class="bi bi-lightning-charge-fill display-4 text-success mb-3"></i>
+                <h5 class="fw-bold">Matchup Predictor</h5>
+                <p class="text-muted mb-0">Compare any two teams head-to-head and calculate win probabilities.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card glass-card hover-lift border-0 shadow-sm h-100 text-center p-4">
+                <i class="bi bi-bar-chart-fill display-4 text-primary mb-3"></i>
+                <h5 class="fw-bold">Analytics Dashboard</h5>
+                <p class="text-muted mb-0">Track budget utilization, team strength, and export data in CSV/XLSX formats.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="row g-4">
+        <!-- SECTION 4: TOP FRANCHISES -->
+        <div class="col-lg-6">
+            <div class="card glass-card border-0 shadow-sm h-100">
+                <div class="card-header bg-transparent border-0 pt-4 pb-0">
+                    <h4 class="fw-bold"><i class="bi bi-award-fill text-warning me-2"></i>Top Franchises</h4>
+                </div>
+                <div class="card-body">
+                    {% for team in top_teams %}
+                    <div class="d-flex align-items-center justify-content-between mb-3 p-3 rounded-3 shadow-sm bg-body">
+                        <div class="d-flex align-items-center">
+                            {% if loop.index == 1 %}<h3 class="mb-0 me-3">🥇</h3>{% elif loop.index == 2 %}<h3 class="mb-0 me-3">🥈</h3>{% elif loop.index == 3 %}<h3 class="mb-0 me-3">🥉</h3>{% else %}<h4 class="mb-0 me-3 text-muted">#{{ loop.index }}</h4>{% endif %}
+                            <img src="{{ url_for('static', filename=TEAM_LOGOS.get(team.team_name, 'images/teams/mi.png')) }}" class="team-logo-small rounded-circle me-3" style="background: {{ TEAM_THEME.get(team.team_name, {}).get('primary', '#1D4ED8') }}">
+                            <div>
+                                <h6 class="fw-bold mb-0">{{ team.team_name }}</h6>
+                                <small class="text-muted">Budget: ₹{{ "%.2f"|format(120 - (team.budget_pct / 100 * 120)) }} Cr</small>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge bg-primary px-3 py-2 fs-6 shadow-sm">{{ "%.1f"|format(team.strength_score) }}</span>
+                        </div>
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center py-4">No teams available. Join the auction to build squads.</p>
+                    {% endfor %}
+                    <div class="text-center mt-3">
+                        <a href="/power-rankings" class="btn btn-outline-primary btn-sm rounded-pill px-4">View Power Rankings</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 5: AUCTION HIGHLIGHTS & SECTION 6: MINI PREDICTOR -->
+        <div class="col-lg-6">
+            <div class="row g-4 h-100">
+                <div class="col-12">
+                    <div class="card glass-card border-0 shadow-sm h-100">
+                        <div class="card-header bg-transparent border-0 pt-4 pb-0">
+                            <h4 class="fw-bold"><i class="bi bi-star-fill text-danger me-2"></i>Auction Highlights</h4>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush bg-transparent">
+                                <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-0">
+                                    <span><i class="bi bi-cash-stack text-success me-2"></i>Most Expensive Player</span>
+                                    <span class="fw-bold">{{ achievements.most_expensive.player if achievements.most_expensive else '-' }}</span>
+                                </li>
+                                <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-0">
+                                    <span><i class="bi bi-gem text-info me-2"></i>Best Value Purchase</span>
+                                    <span class="fw-bold">{{ achievements.best_value.player if achievements.best_value else '-' }}</span>
+                                </li>
+                                <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-0">
+                                    <span><i class="bi bi-shield-shaded text-primary me-2"></i>Strongest Squad</span>
+                                    <span class="fw-bold">{{ achievements.best_squad.team_name if achievements.best_squad else '-' }}</span>
+                                </li>
+                                <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-0">
+                                    <span><i class="bi bi-trophy-fill text-warning me-2"></i>Highest Rated XI</span>
+                                    <span class="fw-bold">{{ achievements.highest_xi.team_name if achievements.highest_xi else '-' }}</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="card glass-card border-0 shadow-sm h-100">
+                        <div class="card-header bg-transparent border-0 pt-4 pb-0">
+                            <h5 class="fw-bold"><i class="bi bi-pie-chart-fill text-info me-2"></i>Champion Odds Preview</h5>
+                        </div>
+                        <div class="card-body">
+                            {% for p in probs %}
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="fw-bold text-muted" style="font-size: 0.9rem;">{{ TEAM_THEME.get(p.team_name, {}).get('short', p.team_name) }}</span>
+                                    <span class="fw-bold text-success" style="font-size: 0.9rem;">{{ "%.1f"|format(p.champion_prob * 100) }}%</span>
+                                </div>
+                                <div class="progress" style="height: 6px;">
+                                    <div class="progress-bar bg-success" style="width: {{ p.champion_prob * 100 }}%"></div>
+                                </div>
+                            </div>
+                            {% else %}
+                            <p class="text-muted text-center py-2">No odds available.</p>
+                            {% endfor %}
+                            <div class="text-center mt-3">
+                                <a href="/predictor" class="btn btn-info text-white btn-sm rounded-pill px-4 fw-bold">Open Full Predictor</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SECTION 7: TECH STACK -->
+<div class="container mb-5 text-center">
+    <h4 class="text-muted text-uppercase mb-4 fw-bold" style="letter-spacing: 2px;">Project Architecture</h4>
+    <div class="d-flex flex-wrap justify-content-center gap-3">
+        <span class="badge bg-dark fs-5 py-2 px-4 rounded-pill shadow-sm"><i class="bi bi-code-slash text-warning me-2"></i>Python 3</span>
+        <span class="badge bg-dark fs-5 py-2 px-4 rounded-pill shadow-sm"><i class="bi bi-server text-info me-2"></i>Flask Web Framework</span>
+        <span class="badge bg-dark fs-5 py-2 px-4 rounded-pill shadow-sm"><i class="bi bi-database-fill text-secondary me-2"></i>SQLite DB</span>
+        <span class="badge bg-dark fs-5 py-2 px-4 rounded-pill shadow-sm"><i class="bi bi-bootstrap-fill text-primary me-2"></i>Bootstrap 5</span>
+        <span class="badge bg-dark fs-5 py-2 px-4 rounded-pill shadow-sm"><i class="bi bi-bar-chart-steps text-danger me-2"></i>Chart.js</span>
+        <span class="badge bg-dark fs-5 py-2 px-4 rounded-pill shadow-sm"><i class="bi bi-cpu-fill text-success me-2"></i>AI Engine</span>
+    </div>
+</div>
+
+<!-- SECTION 8: FOOTER -->
+<footer class="bg-dark text-white py-5 mt-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <h4 class="fw-bold"><i class="bi bi-hammer text-primary me-2"></i>IPL Auction</h4>
+                <p class="text-white-50">An advanced, AI-powered platform designed to simulate realistic IPL mega auctions.</p>
+            </div>
+            <div class="col-md-4">
+                <h5 class="fw-bold text-uppercase mb-3 text-white-50">Quick Links</h5>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="/dashboard/v2" class="text-white text-decoration-none hover-primary">Dashboard</a></li>
+                    <li class="mb-2"><a href="/select-team" class="text-white text-decoration-none hover-primary">Auction</a></li>
+                    <li class="mb-2"><a href="/predictor" class="text-white text-decoration-none hover-primary">Winner Predictor</a></li>
+                    <li class="mb-2"><a href="/simulator" class="text-white text-decoration-none hover-primary">Season Simulator</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <h5 class="fw-bold text-uppercase mb-3 text-white-50">Project Information</h5>
+                <p class="mb-1">Developed By:</p>
+                <h4 class="text-primary fw-bold">Suriyaganesh</h4>
+            </div>
+        </div>
+        <hr class="border-secondary mt-4 mb-4">
+        <div class="text-center text-white-50">
+            <small>&copy; 2026 IPL Auction Simulator. For Portfolio Use Only.</small>
+        </div>
+    </div>
+</footer>
+
+<style>
+.hover-primary:hover { color: var(--bs-primary) !important; }
+.blink { animation: blinker 1.5s linear infinite; }
+@keyframes blinker { 50% { opacity: 0; } }
+</style>
+{% endblock %}

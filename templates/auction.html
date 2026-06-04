@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}Auction Room{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-6">
+    <div class="card mb-4">
+      <div class="card-body">
+        <h2 class="card-title mb-3">Current Player</h2>
+        <h4>{{ player.name }}</h4>
+        <p class="mb-1"><strong>Role:</strong> {{ player.role }}</p>
+        <p class="mb-1"><strong>Base Price:</strong> {{ '%.2f'|format(player.base_price) }} Cr</p>
+        <p class="mb-1"><strong>Rating:</strong> {{ player.rating }}/100</p>
+        <hr>
+        <p class="mb-1"><strong>Current Bid:</strong> {{ '%.2f'|format(current_bid) }} Cr</p>
+        <p class="mb-1"><strong>Highest Bidder:</strong> <span class="badge bg-info">{{ highest_bidder or 'N/A' }}</span></p>
+        <hr>
+        <form action="/bid" method="post" class="d-inline-block me-2">
+          <button type="submit" class="btn btn-primary">Bid</button>
+        </form>
+        <form action="/pass" method="post" class="d-inline-block">
+          <button type="submit" class="btn btn-outline-secondary">Pass</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Event Log</h5>
+        <div class="list-group list-group-sm" style="max-height: 300px; overflow-y: auto;">
+          {% if event_log %}
+            {% for event in event_log %}
+            <div class="list-group-item list-group-item-action">
+              <small class="text-muted">
+                {% if event.event_type == 'BID' %}
+                  <span class="badge bg-primary">Bid</span>
+                {% elif event.event_type == 'AI_BID' %}
+                  <span class="badge bg-warning">AI Bid</span>
+                {% elif event.event_type == 'PASS' %}
+                  <span class="badge bg-secondary">Pass</span>
+                {% elif event.event_type == 'AI_PASS' %}
+                  <span class="badge bg-secondary">AI Pass</span>
+                {% elif event.event_type == 'SOLD' %}
+                  <span class="badge bg-success">Sold</span>
+                {% elif event.event_type == 'UNSOLD' %}
+                  <span class="badge bg-danger">Unsold</span>
+                {% endif %}
+                {{ event.team_name }} 
+                {% if event.amount %}
+                  - ₹{{ '%.2f'|format(event.amount) }} Cr
+                {% endif %}
+              </small>
+            </div>
+            {% endfor %}
+          {% else %}
+            <p class="text-muted mb-0">No events yet.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Your Team: {{ selected_team }}</h5>
+        <p class="mb-2"><strong>Budget Remaining:</strong> <span class="badge bg-success">{{ '%.2f'|format(team.budget) }} Cr</span></p>
+        <p class="mb-2"><strong>Players Purchased:</strong> {{ squad|length }}</p>
+        {% if squad %}
+        <ul class="list-group list-group-sm">
+          {% for member in squad %}
+          <li class="list-group-item">
+            <span class="me-2">{{ member.player_name }}</span>
+            <span class="badge bg-light text-dark">{{ member.role }}</span>
+            <span class="float-end text-muted">{{ '%.2f'|format(member.purchase_price) }} Cr</span>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-muted mb-0">No players purchased yet.</p>
+        {% endif %}
+        <a href="/squad" class="btn btn-outline-primary btn-sm mt-3">View Full Squad</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">AI Team Budgets</h5>
+        <div class="list-group list-group-sm">
+          {% for t in teams %}
+            {% if t.team_name != selected_team %}
+            <div class="list-group-item d-flex justify-content-between">
+              <span>{{ t.team_name }}</span>
+              <span class="badge bg-light text-dark">{{ '%.2f'|format(t.budget) }} Cr</span>
+            </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

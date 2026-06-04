@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Tech Stack - IPL Auction Simulator{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-900 text-info mb-3"><i class="bi bi-stack me-3"></i>Technology Stack</h1>
+        <p class="lead text-muted">A modern, lightweight Python stack optimized for real-time state management.</p>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+        <!-- Backend -->
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-dark text-white pt-3 border-bottom-0">
+                    <h4 class="fw-bold"><i class="bi bi-server me-2"></i>Backend Core</h4>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item py-3"><strong class="text-dark fs-5">Python 3.11</strong><br><small class="text-muted">Primary logic and algorithm engine</small></li>
+                    <li class="list-group-item py-3"><strong class="text-dark fs-5">Flask</strong><br><small class="text-muted">Lightweight WSGI web application framework</small></li>
+                    <li class="list-group-item py-3"><strong class="text-dark fs-5">SQLAlchemy</strong><br><small class="text-muted">ORM mapping for safe and rapid database interactions</small></li>
+                    <li class="list-group-item py-3"><strong class="text-dark fs-5">SQLite / PostgreSQL</strong><br><small class="text-muted">Local dev using SQLite, deploying seamlessly to PGSQL</small></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Frontend -->
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-primary text-white pt-3 border-bottom-0">
+                    <h4 class="fw-bold"><i class="bi bi-browser-chrome me-2"></i>Frontend UI</h4>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item py-3"><strong class="text-dark fs-5">Bootstrap 5.3</strong><br><small class="text-muted">Responsive flexbox grid, utilities, and components</small></li>
+                    <li class="list-group-item py-3"><strong class="text-dark fs-5">Vanilla JavaScript (ES6)</strong><br><small class="text-muted">Fetch API used extensively for DOM manipulation and zero-latency polling</small></li>
+                    <li class="list-group-item py-3"><strong class="text-dark fs-5">Jinja2</strong><br><small class="text-muted">Secure, logic-driven HTML templating engine</small></li>
+                    <li class="list-group-item py-3"><strong class="text-dark fs-5">Chart.js</strong><br><small class="text-muted">Used for rendering elegant team budget distribution charts</small></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

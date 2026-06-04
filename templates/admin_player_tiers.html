@@ -1,0 +1,218 @@
+{% extends 'base.html' %}
+
+{% block title %}Player Tiers Management{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0 fw-bold"><i class="bi bi-layers-fill text-primary me-2"></i>Player Tiers</h1>
+    <div>
+        <form method="POST" action="/admin/recalculate-tiers" class="d-inline">
+            <button type="submit" class="btn btn-dark me-2"><i class="bi bi-arrow-repeat me-1"></i> Auto Recalculate (Safe)</button>
+        </form>
+    </div>
+</div>
+
+<!-- Bulk Actions & Filters -->
+<div class="card shadow-sm border-0 mb-4 bg-light">
+    <div class="card-body">
+        <form id="bulkActionForm" method="POST" action="/admin/players/bulk-action" class="row g-3 align-items-center">
+            <div class="col-auto">
+                <select name="action" id="bulkActionSelect" class="form-select fw-bold">
+                    <option value="" selected>Choose Bulk Action...</option>
+                    <option value="move_tier">Move to Tier</option>
+                    <option value="lock_tier">🔒 Lock Tiers</option>
+                    <option value="unlock_tier">🔓 Unlock Tiers</option>
+                    <option value="mark_unsold">❌ Mark as Unsold</option>
+                    <option value="reset_status">♻️ Reset to Available</option>
+                </select>
+            </div>
+            <div class="col-auto" id="targetTierDiv" style="display: none;">
+                <select name="target_tier" class="form-select">
+                    <option value="Tier 1: Superstar">Tier 1: Superstar</option>
+                    <option value="Tier 2: Star">Tier 2: Star</option>
+                    <option value="Tier 3: Quality Player">Tier 3: Quality Player</option>
+                    <option value="Tier 4: Squad Player">Tier 4: Squad Player</option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <button type="button" class="btn btn-primary fw-bold px-4" onclick="submitBulkAction()">Apply</button>
+            </div>
+            
+            <div class="col text-end">
+                <div class="input-group" style="max-width: 300px; margin-left: auto;">
+                    <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                    <input type="text" id="searchInput" class="form-control border-start-0" placeholder="Search players...">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Tabs -->
+<ul class="nav nav-tabs fw-bold mb-4" id="tierTabs" role="tablist">
+    {% for tier_name, player_list in tiers.items() %}
+    <li class="nav-item" role="presentation">
+        <button class="nav-link {% if loop.first %}active{% endif %} text-dark" id="tab-{{ loop.index }}" data-bs-toggle="tab" data-bs-target="#content-{{ loop.index }}" type="button" role="tab">
+            {{ tier_name }} <span class="badge bg-secondary ms-2">{{ player_list|length }}</span>
+        </button>
+    </li>
+    {% endfor %}
+</ul>
+
+<div class="tab-content" id="tierTabsContent">
+    {% for tier_name, player_list in tiers.items() %}
+    <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="content-{{ loop.index }}" role="tabpanel">
+        
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0 player-table" id="table-{{ loop.index }}">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="text-center" style="width: 50px;">
+                                    <input class="form-check-input select-all-btn" type="checkbox" data-target="table-{{ loop.index }}">
+                                </th>
+                                <th style="width: 50px;"></th>
+                                <th>Player</th>
+                                <th>Role</th>
+                                <th>Rating</th>
+                                <th>Base Price</th>
+                                <th>Status</th>
+                                <th>Lock</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="sortable-list" data-tier="{{ tier_name }}">
+                            {% for p in player_list %}
+                            <tr class="player-row" data-id="{{ p.id }}" data-name="{{ p.name | lower }}" data-role="{{ p.role | lower }}">
+                                <td class="text-center">
+                                    <input class="form-check-input player-checkbox" type="checkbox" value="{{ p.id }}" form="bulkActionForm" name="player_ids">
+                                </td>
+                                <td class="text-muted cursor-move" style="cursor: grab;"><i class="bi bi-grip-vertical fs-5"></i></td>
+                                <td>
+                                    <div class="fw-bold">{{ p.name }}</div>
+                                    <small class="text-muted">{{ p.auction_set or 'Unassigned Set' }}</small>
+                                </td>
+                                <td>{{ ROLE_ICONS.get(p.role, '👤') }} {{ p.role }}</td>
+                                <td>
+                                    <span class="badge {% if p.rating >= 90 %}bg-warning text-dark{% elif p.rating >= 80 %}bg-primary{% else %}bg-secondary{% endif %}">{{ p.rating }}</span>
+                                </td>
+                                <td class="fw-bold">₹{{ p.base_price }} Cr</td>
+                                <td>
+                                    {% if p.status == 'available' %}
+                                        <span class="badge bg-success">Available</span>
+                                    {% elif p.status == 'sold' %}
+                                        <span class="badge bg-primary">Sold ({{ p.sold_to }})</span>
+                                    {% elif p.status == 'unsold' %}
+                                        <span class="badge bg-danger">Unsold</span>
+                                    {% elif p.status == 'accelerated' %}
+                                        <span class="badge bg-warning text-dark">Accelerated</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if p.manual_tier_lock %}
+                                        <i class="bi bi-lock-fill text-warning fs-5" title="Tier Locked"></i>
+                                    {% else %}
+                                        <i class="bi bi-unlock text-muted fs-5 opacity-25" title="Auto"></i>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="/admin/player/{{ p.id }}" class="btn btn-sm btn-outline-dark rounded-circle"><i class="bi bi-eye"></i></a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% if not player_list %}
+                            <tr><td colspan="9" class="text-center text-muted py-5">No players in this tier. Drag players here to assign them.</td></tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    {% endfor %}
+</div>
+
+<!-- SortableJS -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Init drag and drop
+        const lists = document.querySelectorAll('.sortable-list');
+        lists.forEach(list => {
+            new Sortable(list, {
+                group: 'shared',
+                animation: 150,
+                handle: '.cursor-move',
+                ghostClass: 'bg-light',
+                onEnd: function (evt) {
+                    const itemEl = evt.item;
+                    const playerId = itemEl.getAttribute('data-id');
+                    const newTier = evt.to.getAttribute('data-tier');
+                    
+                    if (evt.from !== evt.to) {
+                        fetch('/admin/players/update-tier', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ player_id: playerId, tier: newTier })
+                        }).then(res => res.json()).then(data => {
+                            if (data.success) {
+                                // Update lock icon manually
+                                const lockCell = itemEl.querySelector('td:nth-child(8)');
+                                lockCell.innerHTML = '<i class="bi bi-lock-fill text-warning fs-5" title="Tier Locked"></i>';
+                            }
+                        });
+                    }
+                },
+            });
+        });
+
+        // Search logic
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            let filter = this.value.toLowerCase();
+            document.querySelectorAll('.player-row').forEach(row => {
+                let name = row.getAttribute('data-name');
+                let role = row.getAttribute('data-role');
+                if (name.includes(filter) || role.includes(filter)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        // Select all
+        document.querySelectorAll('.select-all-btn').forEach(btn => {
+            btn.addEventListener('change', function() {
+                let targetId = this.getAttribute('data-target');
+                let table = document.getElementById(targetId);
+                let checkboxes = table.querySelectorAll('.player-checkbox');
+                checkboxes.forEach(cb => {
+                    // only check visible rows
+                    if (cb.closest('tr').style.display !== 'none') {
+                        cb.checked = this.checked;
+                    }
+                });
+            });
+        });
+
+        // Bulk action UI
+        document.getElementById('bulkActionSelect').addEventListener('change', function() {
+            if (this.value === 'move_tier') {
+                document.getElementById('targetTierDiv').style.display = 'block';
+            } else {
+                document.getElementById('targetTierDiv').style.display = 'none';
+            }
+        });
+    });
+
+    function submitBulkAction() {
+        let action = document.getElementById('bulkActionSelect').value;
+        if (!action) return alert('Select an action.');
+        let checked = document.querySelectorAll('.player-checkbox:checked');
+        if (checked.length === 0) return alert('Select at least one player.');
+        document.getElementById('bulkActionForm').submit();
+    }
+</script>
+{% endblock %}

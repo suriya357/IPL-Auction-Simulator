@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Changelog - IPL Auction Simulator{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-900 text-danger mb-3"><i class="bi bi-journal-code me-3"></i>Development Roadmap</h1>
+        <p class="lead text-muted">Tracing the evolution from a simple script to a broadcast-level platform.</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="timeline-container ps-4 border-start border-3 border-danger pb-5">
+                
+                <div class="mb-5 position-relative">
+                    <i class="bi bi-circle-fill text-danger position-absolute" style="left: -1.45rem; top: 0;"></i>
+                    <h3 class="fw-bold text-dark">Phase 5 (Final) - Broadcast & Deploy</h3>
+                    <p class="text-muted mb-2"><i class="bi bi-calendar3 me-2"></i>Current Release</p>
+                    <ul class="list-group list-group-flush border rounded mt-3 shadow-sm">
+                        <li class="list-group-item border-0"><i class="bi bi-check2 text-success me-2"></i>Transformed Auction UI into a real broadcast studio.</li>
+                        <li class="list-group-item border-0"><i class="bi bi-check2 text-success me-2"></i>Added bottom ticker and timeline.</li>
+                        <li class="list-group-item border-0"><i class="bi bi-check2 text-success me-2"></i>Built Portfolio pages and structured README.</li>
+                        <li class="list-group-item border-0"><i class="bi bi-check2 text-success me-2"></i>Hardened configurations for Render PostgreSQL deployment.</li>
+                    </ul>
+                </div>
+
+                <div class="mb-5 position-relative">
+                    <i class="bi bi-circle-fill text-primary position-absolute" style="left: -1.45rem; top: 0;"></i>
+                    <h3 class="fw-bold text-dark">Phase 4 - Admin & AI Realism</h3>
+                    <ul class="list-group list-group-flush border rounded mt-3">
+                        <li class="list-group-item bg-light border-0"><i class="bi bi-dot me-1"></i>Built robust Admin Control Center with SortableJS drag-and-drop.</li>
+                        <li class="list-group-item bg-light border-0"><i class="bi bi-dot me-1"></i>Implemented Player Tiers (Superstars vs Squad).</li>
+                        <li class="list-group-item bg-light border-0"><i class="bi bi-dot me-1"></i>Added "Auction Pressure" and "Role Scarcity" AI modifiers.</li>
+                        <li class="list-group-item bg-light border-0"><i class="bi bi-dot me-1"></i>Re-engineered frontend to eliminate UI flickering via AJAX DOM parsing.</li>
+                    </ul>
+                </div>
+
+                <div class="mb-5 position-relative">
+                    <i class="bi bi-circle-fill text-secondary position-absolute" style="left: -1.45rem; top: 0;"></i>
+                    <h3 class="fw-bold text-dark">Phase 3 - Deep Analytics</h3>
+                    <ul class="list-group list-group-flush border rounded mt-3">
+                        <li class="list-group-item bg-light border-0 text-muted"><i class="bi bi-dot me-1"></i>Created the Predictor Module (Simulated Champions).</li>
+                        <li class="list-group-item bg-light border-0 text-muted"><i class="bi bi-dot me-1"></i>Created the Playing XI Generator Algorithm.</li>
+                        <li class="list-group-item bg-light border-0 text-muted"><i class="bi bi-dot me-1"></i>Added Power Rankings and Head-to-Head Comparisons.</li>
+                    </ul>
+                </div>
+
+                <div class="mb-5 position-relative">
+                    <i class="bi bi-circle-fill text-secondary opacity-50 position-absolute" style="left: -1.45rem; top: 0;"></i>
+                    <h3 class="fw-bold text-muted">Phases 1 & 2 - Foundation</h3>
+                    <p class="text-muted mb-0 small">Initial Flask routing, SQLite setup, basic bidding logic, and rudimentary frontend. This served as the scaffolding for the advanced features built later.</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

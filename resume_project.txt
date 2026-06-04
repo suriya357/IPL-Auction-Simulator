@@ -1,0 +1,9 @@
+Project: IPL Mega Auction Simulator & Analytics Platform
+Role: Full Stack Python Developer
+Tech Stack: Python, Flask, SQLAlchemy, JavaScript (ES6), AJAX, Bootstrap 5, SQLite/PostgreSQL
+
+• Engineered a full-stack IPL Mega Auction simulation platform handling real-time bidding for 300+ players and 10 franchises using Python, Flask, and AJAX polling for a zero-latency broadcast-style UI.
+• Developed a sophisticated AI Bidding Engine that calculates dynamic player valuations based on 10 unique franchise personality profiles, role scarcity multipliers, and real-time "auction pressure" logic.
+• Built an algorithmic 'Best Playing XI' generator and a Season Winner Predictor module utilizing Softmax temperature scaling to analyze squad depth, budget efficiency, and head-to-head power rankings.
+• Designed a secure Admin Management Center featuring HTML5 Drag-and-Drop (SortableJS) for database manipulation, Live Monitor feeds, CSV data exports, and persistent state management.
+• Packaged the application for seamless cloud deployment (Render) utilizing environment-based PostgreSQL abstraction, custom error handlers, and Gunicorn WSGI.

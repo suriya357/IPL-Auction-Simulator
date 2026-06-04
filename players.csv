@@ -1,0 +1,769 @@
+Name,Role,BasePrice,Rating
+Krishnappa Gowtham,All-Rounder,5000000,76
+Moeen Ali,All-Rounder,5000000,76
+Cheteshwar Pujara,Batsman,20000000,96
+K.Bhagath Varma,All-Rounder,10000000,80
+C Hari Nishaanth,Batsman,10000000,84
+M. Harisankar Reddy,Bowler,7500000,78
+Tom Curran ,All-Rounder ,7500000,83
+Steven Smith ,Batsman ,15000000,86
+Sam Billings ,Wicket Keeper ,3000000,64
+Umesh Yadav ,Bowler ,3000000,68
+Ripal Patel ,All-Rounder ,2000000,68
+Vishnu Vinod ,Wicket Keeper ,5000000,73
+Lukman Hussain Meriwala ,Bowler ,20000000,91
+M Siddharth ,Bowler ,2000000,63
+Shakib Al Hasan ,All-Rounder ,3000000,66
+Harbhajan Singh ,Bowler ,10000000,81
+Ben Cutting ,All-Rounder ,3000000,68
+Karun Nair ,Batsman ,15000000,89
+Pawan Negi ,All-Rounder ,15000000,87
+Venkatesh Iyer ,All-Rounder ,15000000,85
+Sheldon Jackson ,Wicket Keeper ,15000000,90
+Vaibhav Arora ,Bowler ,10000000,88
+Nathan Coulter-Nile ,Bowler ,5000000,73
+Adam Milne ,Bowler ,10000000,82
+Piyush Chawla ,Bowler ,7500000,84
+James Neesham ,All-Rounder ,2000000,68
+Yudhvir Charak ,All-Rounder ,2000000,66
+Marco Jansen ,All-Rounder ,2000000,69
+Arjun Tendulkar ,All-Rounder ,20000000,93
+Jhye Richardson ,Bowler ,2000000,67
+Riley Meredith ,Bowler ,15000000,88
+Shahrukh Khan ,All-Rounder ,7500000,84
+Moises Henriques ,All-Rounder ,10000000,88
+Dawid Malan ,All-Rounder ,7500000,78
+Fabian Allen , All-Rounder ,2000000,63
+Jalaj Saxena ,All-Rounder ,7500000,80
+Saurabh Kumar ,All-Rounder ,5000000,78
+Utkarsh Singh ,All-Rounder ,15000000,93
+Christopher Morris ,All-Rounder ,20000000,97
+Shivam Dube ,All-Rounder ,10000000,81
+Chetan Sakariya ,Bowler ,2000000,60
+Mustafizur Rahman ,Bowler ,10000000,88
+Liam Livingstone ,All-Rounder ,5000000,73
+K.C Cariappa ,Bowler ,3000000,67
+Akash Singh ,Bowler,2000000,63
+Kuldip Yadav , Bowler ,2000000,67
+Kyle Jamieson ,All-Rounder ,15000000,92
+Glenn Maxwell ,All-Rounder ,3000000,65
+Dan Christian ,All-Rounder ,3000000,67
+Sachin Baby ,Batsman ,20000000,90
+Rajat Patidar ,Batsman ,20000000,94
+Mohammed Azharudeen ,Wicket Keeper ,7500000,79
+Suyash Prabhudesai ,All-Rounder ,20000000,98
+Kona Srikar Bharat , Wicket Keeper,15000000,85
+Kedar Jadhav ,All-Rounder ,3000000,65
+Mujeeb Zadran ,Bowler ,10000000,83
+J Suchith ,Bowler ,10000000,84
+Michael Hussey,Batsman,15000000,94
+Irfan Pathan,All-Rounder,5000000,77
+Rahul Sharma,Bowler,10000000,83
+Kyle Abbott,Bowler,15000000,94
+Andrew Tye,Bowler,15000000,94
+Pratyush Singh,All-Rounder,20000000,91
+Ankush Bains,Wicket Keeper,15000000,89
+Eklavya Dwivedi,Wicket Keeper,20000000,95
+Yuvraj Singh,Batsman,2000000,65
+Angelo Mathews,All-Rounder,20000000,92
+Zaheer Khan,Bowler,3000000,64
+Amit Mishra,Bowler,10000000,89
+Shreyas Iyer,Batsman,2000000,61
+Gurinder Sandhu,Bowler,7500000,84
+Jaydev Unadkat,Bowler,7500000,81
+Domnic Joseph Muthuswamy,Bowler,15000000,90
+Albie Morkel,All-Rounder,3000000,68
+Travis Head,Batsman,7500000,78
+Marcus Stoinis,All-Rounder,5000000,70
+C.M. Gautam,Wicket Keeper,20000000,90
+Kona Srikar Bharat,Wicket Keeper,15000000,89
+K.K. Jiyaz,Bowler,10000000,87
+Murali Vijay,Batsman,3000000,63
+Nikhil Shankar Naik,Wicket Keeper,15000000,89
+Yogesh Gowalkar,All-Rounder,5000000,72
+K.C. Cariappa,Bowler,20000000,97
+James Neesham,All-Rounder,7500000,75
+Brad Hogg,Bowler,15000000,85
+Aditya Garhwal,All-Rounder,10000000,81
+Sheldon Jackson,Batsman,7500000,81
+Sumit Narwal,All-Rounder,10000000,84
+Vaibhav Rawal,All-Rounder,10000000,83
+Aaron Finch,Batsman,15000000,86
+Pragyan Ojha,Bowler,2000000,62
+Abhimanyu Mithun,Bowler,3000000,65
+Mitchell McClenaghan,Bowler,3000000,62
+Aiden Blizzard,Batsman,5000000,70
+Hardik Pandya,All-Rounder,2000000,64
+Akshay Wakhare,Bowler,7500000,76
+Nitish Rana,All-Rounder,10000000,85
+Siddhesh Dinesh Lad,All-Rounder,15000000,93
+J. Suchitch,All-Rounder,20000000,98
+Christopher Morris,All-Rounder,5000000,75
+Juan Theron,Bowler,20000000,91
+Barinder Singh Saran,Bowler,10000000,86
+Dinesh Salunkhe,All-Rounder,3000000,60
+Sagar Trivedi,All-Rounder,7500000,78
+Pardeep Sahu,All-Rounder,15000000,92
+Dinesh Karthik,Wicket Keeper,20000000,91
+Darren Sammy,All-Rounder,20000000,90
+David Wiese,All-Rounder,5000000,73
+Sean Abbott,Bowler,7500000,77
+Adam Milne,Bowler,10000000,89
+Sarfaraz Naushad Khan,Batsman,2000000,66
+Subramaniam Badrinath,Batsman,10000000,85
+Jalaj Saxena,All-Rounder,5000000,78
+Shishir Bhavane,Batsman,7500000,84
+Trent Boult,Bowler,10000000,82
+Praveen Kumar,Bowler,5000000,73
+Kevin Pietersen,Batsman,5000000,72
+Eoin Morgan,Batsman,15000000,92
+Ravi Bopara,All-Rounder,7500000,79
+Kane Williamson,All-Rounder,15000000,91
+Laxmi Ratan Shukla,All-Rounder,2000000,66
+Prasanth Padmanabhan,All-Rounder,10000000,83
+Hanuma Vihari,Batsman,10000000,83
+Siddarth Kaul,Bowler,5000000,71
+Dirk Nannes,Bowler,5000000,73
+Ben Laughlin,Bowler,2000000,69
+Akila Dananjaya,All-Rounder,3000000,68
+Jason Holder,Bowler,2000000,64
+Johan Botha,All-Rounder,10000000,84
+Jesse Ryder,All-Rounder,15000000,93
+Jeevan Mendis,All-Rounder,10000000,89
+Manpreet Gony,Bowler,2000000,62
+Luke Pomersbach,Batsman,7500000,77
+Sachithra Senanayaka,All-Rounder,20000000,97
+Ryan McLaren,Bowler,7500000,78
+Glenn Maxwell,All-Rounder,10000000,86
+Nathan Coulter-Nile,Bowler,3000000,68
+Ricky Ponting,Batsman,15000000,90
+Philip Hughes,Batsman,2000000,61
+Jacob Oram,All-Rounder,2000000,60
+Ajantha Mendis,Bowler,7500000,75
+Kane Richardson,Bowler,15000000,93
+Abhishek Nayar,All-Rounder,10000000,81
+Michael Clarke,Batsman,3000000,62
+James Faulkner,All-Rounder,15000000,91
+Fidel Edwards,Bowler,7500000,79
+Kusal Janith Perera,Wicket Keeper,3000000,66
+Rudra Pratap Singh,Bowler,3000000,64
+Moises Henriques,All-Rounder,2000000,68
+Ravi Rampaul,Bowler,3000000,63
+Pankaj Singh,Bowler,2000000,69
+Daniel Christian,All-Rounder,3000000,66
+Christopher Barnwell,All-Rounder,15000000,93
+Thisara Perera,All-Rounder,10000000,81
+Sudeep Tyagi,Bowler,7500000,83
+Clinton McKay,Bowler,7500000,81
+Nathan McCullum,Bowler,7500000,82
+Quinton De Kock,Wicket Keeper,3000000,65
+Pawan Negi,All-Rounder,5000000,71
+Sanju Samson,Wicket Keeper,5000000,76
+Carlos Brathwaite,All-Rounder,3000000,61
+Karun Nair,Batsman,2000000,63
+Rishabh Pant,Wicket Keeper,2000000,69
+Joel Paris,Bowler,3000000,67
+Sam Billings,Wicket Keeper,10000000,89
+Chama Milind,Bowler,20000000,92
+Mahipal Lomror,All-Rounder,5000000,79
+Syed Khaleel Ahmed,All-Rounder,10000000,81
+Akhil Arvind Herwadkar,All-Rounder,20000000,98
+Pawan Suyal,Bowler,15000000,87
+Dale Steyn,Bowler,20000000,90
+Dwayne Smith,All-Rounder,10000000,81
+Dhawal Kulkarni,Bowler,3000000,67
+Ishan Kishan,Wicket Keeper,7500000,75
+Jaydev Shah,All-Rounder,3000000,62
+Shadab Jakati,All-Rounder,3000000,64
+Pravin Tambe,Bowler,2000000,60
+Pradeep Sangwan,All-Rounder,2000000,69
+Shivil Kaushik,Bowler,2000000,67
+Akshdeep Nath,All-Rounder,5000000,71
+Sarabjit Ladda,Bowler,10000000,88
+Umang Sharma,Batsman,2000000,67
+Paras Dogra,Batsman,2000000,68
+Mohit Sharma,Bowler,5000000,77
+Farhaan Behardien,All-Rounder,3000000,60
+Armaan Jaffer,Batsman,15000000,92
+Swapnil Singh,All-Rounder,5000000,75
+Ankit Singh Rajpoot,Bowler,5000000,70
+John Hastings,Bowler,7500000,75
+Colin Munro,All-Rounder,2000000,62
+Rajagopal Sathish,All-Rounder,7500000,75
+Manan Ajay Sharma,All-Rounder,5000000,74
+Jos Buttler,Wicket Keeper,20000000,99
+Nathu Singh,Bowler,15000000,87
+Tim Southee,Bowler,10000000,81
+Krunal Pandya,All-Rounder,20000000,95
+Kishore Pramod Kamath,All-Rounder,20000000,94
+Deepak Punia,All-Rounder,20000000,91
+Jitesh Sharma,Wicket Keeper,15000000,92
+Mitchell Marsh,All-Rounder,7500000,78
+M. Ashwin,Bowler,20000000,93
+Ishant Sharma,Bowler,15000000,86
+Rajat Bhatia,All-Rounder,3000000,62
+Ashok Dinda,Bowler,10000000,86
+Scott Boland,Bowler,10000000,83
+Peter Handscomb,Wicket Keeper,20000000,94
+Adam Zampa,Bowler,5000000,72
+Ishwar Chandra Pandey,Bowler,15000000,88
+Deepak Chahar,All-Rounder,5000000,74
+Jaskaran Singh,Bowler,7500000,84
+Baba Aparajith,All-Rounder,7500000,78
+Ankit Sharma,All-Rounder,5000000,77
+Shane Watson,All-Rounder,10000000,81
+Stuart Binny,All-Rounder,20000000,99
+Samuel Badree,Bowler,20000000,91
+Praveen Dubey,All-Rounder,10000000,81
+Vikramjeet Malik,Bowler,5000000,78
+Akshay Karnewar,All-Rounder,5000000,70
+Iqbal Abdullah,All-Rounder,15000000,94
+Sachin Baby,Batsman,20000000,93
+Vikas Tokas,Bowler,10000000,81
+Ashish Nehra,Bowler,5000000,76
+Deepak Hooda,All-Rounder,5000000,76
+Mustafizur Rahman,Bowler,7500000,84
+Aditya Tare,Wicket Keeper,2000000,64
+Barinder Singh Sran,Bowler,3000000,63
+Ben Cutting,All-Rounder,2000000,66
+Vijay Shankar,All-Rounder,20000000,93
+Tirumalasetti Suman,Batsman,20000000,98
+Avanish Rao Aravelly ,Wicket-Keeper ,10000000,86
+Daryl Mitchell ,All-Rounder ,2000000,68
+Sameer Rizvi ,Batter ,7500000,84
+Rachin Ravindra ,All-Rounder ,2000000,68
+Shardul Thakur ,All-Rounder ,2000000,64
+Ricky Bhui ,Wicket-Keeper ,10000000,80
+Sumit Kumar ,All-Rounder ,3000000,60
+Swastik Chhikara ,Batter ,2000000,66
+Shai Hope ,Wicket-Keeper ,10000000,87
+Rasikh Dar ,Bowler ,3000000,61
+Kumar Kushagra ,Wicket-Keeper ,2000000,68
+Tristan Stubbs ,Wicket-Keeper ,2000000,66
+Harry Brook ,Batter ,3000000,64
+Kartik Tyagi ,Bowler ,20000000,91
+Spencer Johnson ,Bowler ,20000000,93
+Manav Suthar ,Bowler ,7500000,78
+Robin Minz ,Wicket-Keeper ,15000000,90
+Sushant Mishra ,Bowler ,5000000,76
+Azmatullah Omarzai ,All-Rounder ,7500000,76
+Mujeeb Rahman ,Bowler ,20000000,97
+Manish Pandey ,Batter ,7500000,81
+Gus Atkinson ,Bowler ,2000000,67
+Angkrish Raghuvanshi ,Batter ,7500000,78
+Mitchell  Starc ,Bowler ,7500000,77
+Sherfane Rutherford ,Batter ,10000000,80
+Ramandeep  Singh ,All-Rounder ,5000000,79
+K.S. Bharat ,Wicket-Keeper ,10000000,89
+Sakib Hussain ,Bowler ,3000000,69
+Ashton Turner ,Batter ,7500000,78
+David Willey  ,All-Rounder ,2000000,64
+M. Siddharth ,Bowler ,2000000,68
+Shivam  Mavi ,Bowler ,15000000,87
+Arshin Kulkarni ,All-Rounder ,20000000,96
+Mohd. Arshad Khan ,All-Rounder ,3000000,62
+Dilshan Madushanka ,Bowler ,2000000,68
+Shreyas Gopal ,Bowler ,5000000,71
+Shivalik Sharma ,All-Rounder ,5000000,78
+Anshul Kamboj ,All-Rounder ,3000000,66
+Mohammad Nabi ,All-Rounder ,15000000,94
+Naman Dhir ,All-Rounder ,20000000,99
+Nuwan Thushara ,Bowler ,10000000,88
+Gerald Coetzee ,All-Rounder ,2000000,65
+Chris Woakes  ,All-Rounder ,10000000,84
+Tanay Thyagarajann ,All-Rounder ,20000000,91
+Vishwanath Pratap Singh ,All-Rounder ,20000000,99
+Ashutosh Sharma ,All-Rounder ,7500000,81
+Shashank  Singh ,Batter ,7500000,76
+Rilee Rossouw ,Batter ,5000000,76
+Prince Choudhary ,Bowler ,7500000,76
+Harshal Patel ,All-Rounder ,3000000,63
+Shubham Dubey ,Batter ,15000000,85
+Rovman Powell ,Batter ,10000000,87
+Abid Mushtaq ,All-Rounder ,15000000,90
+Nandre Burger ,Bowler ,15000000,87
+Tom Kohler-Cadmore ,Wicket-Keeper ,2000000,69
+Lockie Ferguson ,Bowler ,5000000,75
+Saurav Chuahan ,Batter ,5000000,71
+Alzarri Joseph ,Bowler ,15000000,92
+Swapnil Singh ,All-Rounder ,10000000,86
+Yash  Dayal ,Bowler ,15000000,88
+Jhathavedh Subramanyan ,Bowler ,20000000,99
+Jaydev Unadkat ,Bowler ,20000000,97
+Wanindu Hasaranga ,All-Rounder ,15000000,88
+Pat Cummins ,All-Rounder ,5000000,79
+Travis Head ,Batter ,2000000,61
+Faf Du Plessis,Batsman,20000000,95
+Brendon McCullum,Wicket Keeper,2000000,69
+Ben Hilfenhaus,Bowler,10000000,86
+Matt Henry,Bowler,2000000,68
+Mithun Manhas,All-Rounder,10000000,87
+Ronit More,Bowler,20000000,97
+Mohammad Shami,Bowler,2000000,66
+Manoj Tiwary,Batsman,7500000,80
+Jean-Paul Duminy,Batsman,20000000,95
+Ross Taylor,Batsman,15000000,89
+Kedar Jadhav,Batsman,2000000,69
+Mayank Agarwal,Batsman,20000000,98
+Wayne Parnell,Bowler,7500000,80
+Shahbaz Nadeem,Bowler,3000000,60
+Saurabh Tiwary,Batsman,10000000,81
+Rahul Shukla,Bowler,3000000,63
+Jayant Yadav,All-Rounder,2000000,64
+HS Sharath,Bowler,2000000,69
+Milind Kumar,Batsman,5000000,75
+Mitchell Johnson,All-Rounder,10000000,89
+George Bailey,Batsman,3000000,66
+Virender Sehwag,Batsman,15000000,85
+Rishi Dhawan,All-Rounder,5000000,75
+Wriddhiman Saha,Wicket Keeper,10000000,85
+Shaun Marsh,Batsman,15000000,85
+Beuran Hendricks,Bowler,7500000,77
+Lakshmipathy Balaji,Bowler,15000000,88
+Gurkirat Singh Mann,Batsman,2000000,61
+Murali Kartik,Bowler,10000000,82
+Sandeep Sharma,Bowler,2000000,66
+Mandeep Hardev Singh,All-Rounder,2000000,60
+Akshar Rajesh Patel,All-Rounder,5000000,71
+Parvinder Awana,Bowler,7500000,78
+Shardul Narendra Thakur,Bowler,20000000,99
+Anureet Singh,Bowler,3000000,60
+Shivam Sharma,Bowler,10000000,86
+Karanveer Singh,All-Rounder,3000000,67
+Jacques Kallis,All-Rounder,20000000,99
+Robin Uthappa,Batsman,15000000,86
+Piyush Chawla,Bowler,7500000,82
+Yusuf Pathan,All-Rounder,2000000,63
+Shakib Al Hasan,All-Rounder,5000000,71
+Morne Morkel,Bowler,5000000,73
+Ranganath Vinay Kumar,Bowler,3000000,65
+Umesh Yadav,Bowler,15000000,92
+Manish Pandey,Batsman,15000000,91
+Chris Lynn,Batsman,10000000,87
+Patrick Cummins,Bowler,7500000,75
+Ryan Ten Doeschate,All-Rounder,3000000,65
+Suryakumar Yadav,Batsman,15000000,93
+Andre Russell,All-Rounder,10000000,81
+Manvinder Bisla,Wicket Keeper,7500000,78
+Veer Pratap Singh,Bowler,2000000,69
+Kuldeep Singh Yadav,Bowler,3000000,66
+Debabrata Das,Wicket Keeper,10000000,88
+Sayan Sekhar Mandal,All-Rounder,20000000,93
+Corey Anderson,All-Rounder,20000000,90
+Jasprit Bumrah,Bowler,20000000,97
+Josh Hazlewood,Bowler,5000000,73
+Marchant De Lange,Bowler,7500000,80
+Krismar Santokie,Bowler,3000000,67
+Ben Dunk,Wicket Keeper,3000000,61
+Apoorv Vijay Wankhade,Batsman,10000000,88
+Sushant Marathe,Wicket Keeper,10000000,84
+Shreyas Gopal,Bowler,10000000,83
+Steven Smith,All-Rounder,7500000,84
+Brad Hodge,Batsman,5000000,79
+Unmukt Chand,Batsman,5000000,72
+Dishant Yagnik,Wicket Keeper,15000000,86
+Kevon Cooper,All-Rounder,20000000,92
+Ankit Nagendra Sharma,Bowler,10000000,83
+Rahul Tewatia,All-Rounder,3000000,64
+Mitchell Starc,Bowler,3000000,63
+Varun Aaron,Bowler,20000000,95
+Parthiv Patel,Wicket Keeper,5000000,70
+Muttiah Muralitharan,Bowler,5000000,79
+Nic Maddinson,Batsman,3000000,69
+Harshal Patel,Bowler,20000000,91
+Vijay Zol,Batsman,20000000,93
+Abu Nechim Ahmed,Bowler,15000000,92
+Sachin Rana,Bowler,3000000,62
+Sandeep Warrier,Bowler,5000000,74
+Tanmay Mishra,Batsman,10000000,80
+Yogesh Takawale,Wicket Keeper,20000000,96
+Yuzvendra Singh Chahal,Bowler,3000000,64
+David Warner,Batsman,20000000,90
+Bhuvneshwar Kumar,Bowler,3000000,67
+Karn Sharma,Bowler,10000000,83
+KL Rahul,Batsman,3000000,62
+Parveez Rasool,All-Rounder,10000000,81
+Venugopal Rao,Batsman,2000000,65
+Naman Ojha,Wicket Keeper,3000000,67
+Brendan Taylor,Wicket Keeper,2000000,64
+Prasanth Parameswaran,Bowler,3000000,67
+Amit Paunikar,Wicket Keeper,10000000,89
+Ashish Reddy,Bowler,5000000,71
+Srikkanth Anirudha,Batsman,15000000,90
+Ricky Bhui,Batsman,7500000,78
+Manprit Juneja,Batsman,2000000,69
+Sam Curran,All-Rounder,2000000,66
+R. Sai Kishore,Bowler,15000000,89
+Shimron Hetmyer,Batsman,7500000,78
+Alex Carey,Wicket Keeper,5000000,75
+Jason Roy,Batsman,10000000,82
+Chris Woakes,All-Rounder,5000000,76
+Tushar Deshpande,Bowler,15000000,90
+Lalit Yadav,All-Rounder,7500000,81
+Sheldon Cottrell,Bowler,20000000,97
+Chris Jordan,All-Rounder,3000000,65
+Prabhsimran Singh,Wicket Keeper,15000000,87
+Tajinder Dhillon,All-Rounder,20000000,96
+Ishan Porel,Bowler,20000000,95
+Pat Cummins,All-Rounder,10000000,81
+Varun Chakaravarthy,All-Rounder,3000000,68
+Tom Banton,Batsman,10000000,84
+Chris Green,All-Rounder,15000000,89
+M Siddharth,Bowler,3000000,68
+Digvijay Deshmukh,All-Rounder,5000000,73
+Prince Balwant Rai Singh,All-Rounder,3000000,60
+Mohsin Khan,Bowler,2000000,62
+Yashasvi Jaiswal,All-Rounder,3000000,60
+Tom Curran,All-Rounder,15000000,88
+Anuj Rawat,Wicket Keeper,20000000,92
+David Miller,Batsman,2000000,68
+Oshane Thomas ,Bowler,10000000,87
+Anirudha Ashok Joshi,All-Rounder,5000000,79
+Akash Singh,Bowler,20000000,91
+Isuru Udana,All-Rounder,3000000,65
+Shahbaz Ahamad,Wicket Keeper,10000000,87
+Joshua Philippe,Wicket Keeper,3000000,66
+Pavan Deshpande,All-Rounder,15000000,89
+Priyam Garg,Batsman,7500000,78
+Virat Singh,Batsman,5000000,74
+Fabian Allen,All-Rounder,20000000,94
+Sandeep Bavanaka,All-Rounder,3000000,61
+Sanjay Yadav,All-Rounder,5000000,79
+Abdul Samad,All-Rounder,20000000,96
+Ruturaj Gaikwad ,Batsman,20000000,91
+Colin Ingram,Batsman,20000000,94
+Axar Rajesh Patel,All-Rounder,20000000,94
+Sherfane Rutherford,All-Rounder,5000000,76
+Keemo Paul,All-Rounder,20000000,95
+Bandaru Ayyappa,Bowler,20000000,91
+Nicolas Pooran,Wicket Keeper,3000000,63
+Hardus Viljoen,Bowler,10000000,80
+Darshan Nalkande,All-Rounder,20000000,95
+Arshdeep Singh ,Bowler,10000000,81
+Agnivesh Ayachi,All-Rounder,20000000,97
+Harpreet Brar,All-Rounder,7500000,78
+Joe Denly ,Batsman,10000000,87
+Harry Gurney,Bowler,5000000,74
+Shrikant Mundhe,All-Rounder,5000000,78
+Prithvi Raj Yarra,Bowler,5000000,77
+Anrich Nortje,Bowler,10000000,87
+Lasith Malinga,Bowler,2000000,65
+Anmolpreet Singh,Batsman,2000000,68
+Pankaj Jaswal,All-Rounder,15000000,89
+Rasikh Dar,Bowler,7500000,79
+Ashton Turner,All-Rounder,7500000,81
+Liam Livingstone,All-Rounder,2000000,67
+Shashank Singh,All-Rounder,2000000,65
+Riyan Parag,All-Rounder,7500000,75
+Manan Vohra,Batsman,15000000,85
+Shubham Ranjane,All-Rounder,15000000,94
+Shivam Dube,All-Rounder,2000000,60
+Prayas Ray Barman,All-Rounder,5000000,71
+Himmat Singh,Batsman,20000000,98
+Gurkeerat Singh Mann,All-Rounder,10000000,83
+Heinrich Klaasen,Wicket Keeper,15000000,94
+Devdutt Padikkal,Batsman,7500000,78
+Jonny Bairstow ,Wicket Keeper,10000000,86
+Martin Guptill,Batsman,5000000,74
+Robin Uthappa ,Batsman ,10000000,80
+Dwayne Bravo ,All-Rounder ,20000000,91
+Ambati Rayudu ,Wicket Keeper ,5000000,76
+Deepak Chahar ,Bowler ,2000000,63
+C.Hari Nishaanth ,Batsman ,3000000,64
+N. Jagadeesan ,Wicket Keeper ,7500000,75
+K.M. Asif ,Bowler ,20000000,91
+Tushar Deshpande ,Bowler ,15000000,86
+Chris Jordan ,All-Rounder ,10000000,85
+Maheesh Theekshana ,Bowler ,7500000,83
+Rajvardhan Hangargekar ,All-Rounder ,10000000,84
+Simarjeet Singh ,Bowler ,3000000,64
+Devon Conway ,Batsman ,2000000,60
+Dwaine Pretorius ,All-Rounder ,5000000,72
+Mitchell Santner ,All-Rounder ,20000000,90
+Subhranshu Senapati ,Batsman ,7500000,77
+Mukesh Choudhary ,Bowler ,3000000,63
+Prashant Solanki ,Bowler ,2000000,68
+K.Bhagath Varma ,All-Rounder ,10000000,86
+David Warner ,Batsman ,7500000,79
+Mitchell Marsh ,All-Rounder ,20000000,97
+Kuldeep Yadav ,Bowler ,10000000,81
+Ashwin Hebbar ,Batsman ,2000000,68
+Sarfaraz Khan ,All-Rounder ,2000000,66
+Kamlesh Nagarkoti ,All-Rounder ,7500000,83
+Mandeep Singh ,Batsman ,3000000,66
+Syed Khaleel Ahmed ,Bowler ,2000000,67
+Lungisani Ngidi ,Bowler ,15000000,87
+Yash Dhull ,All-Rounder ,7500000,84
+Vicky Ostwal ,All-Rounder ,3000000,64
+Lalit Yadav ,All-Rounder ,15000000,88
+Tim Seifert ,Wicket Keeper ,7500000,84
+Pravin Dubey ,All-Rounder ,10000000,85
+Mohammad Shami ,Bowler ,5000000,73
+David Miller ,Batsman ,15000000,90
+Jason Roy  ,Batsman ,5000000,71
+Wriddhiman  Saha ,Wicket Keeper ,5000000,71
+Matthew Wade ,Wicket Keeper ,10000000,88
+Abhinav Sadarangani ,Batsman ,7500000,83
+Rahul Tewatia ,All-Rounder ,3000000,60
+Noor  Ahmad ,Bowler ,3000000,64
+R. Sai Kishore ,Bowler ,5000000,73
+Dominic Drakes ,All-Rounder ,5000000,78
+Vijay Shankar ,All-Rounder ,3000000,65
+Jayant Yadav ,All-Rounder ,15000000,85
+Darshan Nalkande ,All-Rounder ,2000000,66
+B. Sai Sudharsan ,All-Rounder ,10000000,88
+Gurkeerat Singh ,All-Rounder ,5000000,71
+Varun Aaron ,Bowler ,7500000,77
+Pradeep Sangwan ,All-Rounder ,20000000,96
+Shreyas Iyer ,Batsman ,5000000,78
+Mohammad  Nabi ,All-Rounder ,5000000,74
+Nitish Rana ,All-Rounder ,15000000,93
+Sam Billings  ,Wicket Keeper ,15000000,89
+Ajinkya Rahane ,Batsman ,5000000,75
+Rinku Singh ,Batsman ,7500000,82
+Anukul Roy ,All-Rounder ,7500000,80
+Alex Hales  ,Batsman ,3000000,69
+Tim Southee ,Bowler ,10000000,86
+Baba Indrajith ,Wicket Keeper ,7500000,77
+Chamika Karunaratne ,All-Rounder ,2000000,63
+Abhijeet Tomar ,Batsman ,3000000,68
+Aman Khan ,All-Rounder ,7500000,78
+Ramesh Kumar ,Batsman ,7500000,78
+Pratham Singh ,Batsman ,7500000,78
+Ashok Sharma ,Bowler ,15000000,93
+Quinton De Kock ,Wicket Keeper ,5000000,70
+Krunal Pandya ,All-Rounder ,20000000,98
+Mark Wood ,Bowler ,5000000,75
+Avesh Khan ,Bowler ,7500000,78
+Ankit Singh Rajpoot ,Bowler ,2000000,68
+K. Gowtham ,All-Rounder ,20000000,95
+Dushmanta Chameera ,Bowler ,20000000,93
+Shahbaz Nadeem ,Bowler ,20000000,95
+Manan Vohra ,Batsman ,7500000,82
+Evin Lewis ,Batsman ,2000000,69
+Mohsin Khan ,Bowler ,20000000,92
+Mayank Yadav ,Bowler ,15000000,92
+Ayush Badoni ,All-Rounder ,2000000,69
+Kyle Mayers ,All-Rounder ,10000000,80
+Karan Sharma ,All-Rounder ,3000000,61
+Jason Holder ,All-Rounder ,20000000,98
+Deepak Hooda ,All-Rounder ,5000000,73
+Ishan Kishan ,Wicket Keeper ,5000000,72
+Dewald Brevis ,Batsman ,15000000,87
+Anmolpreet Singh ,Batsman ,15000000,86
+Basil Thampi ,Bowler ,20000000,90
+Murugan Ashwin ,Bowler ,7500000,79
+Mayank Markande ,Bowler ,7500000,77
+N. Tilak Varma ,All-Rounder ,15000000,85
+Sanjay Yadav ,All-Rounder ,20000000,95
+Jofra Archer ,All-Rounder ,20000000,96
+Daniel Sams ,All-Rounder ,10000000,86
+Tymal Mills ,Bowler ,2000000,62
+Tim David ,All-Rounder ,10000000,80
+Aryan Juyal ,Wicket Keeper ,7500000,77
+Rahul Buddhi ,Batsman ,7500000,84
+Hrithik Shokeen ,All-Rounder ,3000000,60
+Arjun  Tendulkar ,All-Rounder ,3000000,69
+Shikhar Dhawan ,Batsman ,2000000,66
+Kagiso Rabada ,Bowler ,3000000,69
+Jonny Bairstow  ,Wicket Keeper ,7500000,79
+Rahul Chahar ,Bowler ,10000000,86
+Harpreet  Brar ,All-Rounder ,2000000,63
+Jitesh Sharma ,Wicket Keeper ,5000000,71
+Prabhsimran Singh ,Wicket Keeper ,5000000,71
+Ishan Porel ,Bowler ,3000000,60
+Odean Smith ,All-Rounder ,2000000,60
+Sandeep Sharma ,Bowler ,3000000,65
+Raj Angad Bawa ,All-Rounder ,2000000,61
+Rishi Dhawan ,All-Rounder ,3000000,69
+Nathan Ellis ,Bowler ,20000000,92
+Prerak Mankad ,All-Rounder ,20000000,97
+Atharva Taide ,All-Rounder ,7500000,78
+Bhanuka Rajapaksa ,Batsman ,15000000,91
+Benny Howell ,All-Rounder ,5000000,75
+Writtick Chatterjee ,All-Rounder ,5000000,76
+Baltej Dhanda ,Bowler ,3000000,64
+Ansh Patel ,All-Rounder ,2000000,66
+R. Ashwin ,All-Rounder ,10000000,84
+Trent Boult ,Bowler ,3000000,67
+Shimron Hetmyer ,Batsman ,5000000,78
+Devdutt Padikkal ,Batsman ,10000000,86
+Prasidh Krishna ,Bowler ,7500000,78
+Yuzvendra Chahal ,Bowler ,7500000,75
+Riyan Parag ,All-Rounder ,2000000,61
+Navdeep Saini ,Bowler ,5000000,72
+Kuldeep  Sen ,Bowler ,5000000,75
+Rassie Van Der Dussen ,Batsman ,7500000,81
+Obed Mccoy ,Bowler ,10000000,86
+Dhruv Jurel ,Wicket Keeper ,5000000,70
+Tejas Baroka ,Bowler ,5000000,76
+Shubham Garhwal ,All-Rounder ,5000000,76
+Anunay Singh ,All-Rounder ,20000000,92
+Faf Du Plessis ,Batsman ,15000000,89
+Dinesh  Karthik ,Wicket Keeper ,3000000,60
+Josh Hazlewood  ,Bowler ,2000000,69
+Shahbaz Ahamad ,All-Rounder ,2000000,66
+Anuj Rawat ,Wicket Keeper ,7500000,77
+Akash  Deep  ,Bowler ,20000000,95
+Karn Sharma ,Bowler ,10000000,87
+Mahipal Lomror ,All-Rounder ,15000000,86
+Finn Allen ,Batsman ,2000000,63
+Jason Behrendorff ,Bowler ,3000000,68
+Siddharth  Kaul ,Bowler ,10000000,88
+Suyash Prabhudessai ,All-Rounder ,2000000,60
+Luvnith Sisodia ,Wicket Keeper ,3000000,61
+Chama Milind ,Bowler ,7500000,82
+Aneeshwar Gautam ,All-Rounder ,5000000,70
+Washington Sundar ,All-Rounder ,15000000,94
+Nicholas Pooran ,Wicket Keeper ,20000000,94
+Bhuvneshwar Kumar ,Bowler ,15000000,88
+T. Natarajan ,Bowler ,5000000,78
+Priyam  Garg ,Batsman ,7500000,81
+Rahul Tripathi ,Batsman ,2000000,61
+Abhishek Sharma ,All-Rounder ,2000000,69
+Jagadeesha Suchith ,Bowler ,20000000,91
+Aiden Markram ,Batsman ,10000000,84
+Romario Shepherd ,All-Rounder ,2000000,63
+Glenn Phillips ,Wicket Keeper ,10000000,85
+Fazalhaq Farooqi ,Bowler ,7500000,81
+Sean Abbott ,Bowler ,10000000,89
+R Samarth ,Batsman ,2000000,69
+Shashank Singh ,All-Rounder ,7500000,76
+Saurabh Dubey ,Bowler ,5000000,79
+Dwayne Bravo,All-Rounder,20000000,90
+Ambati Rayudu,Wicket Keeper,20000000,97
+Harbhajan Singh,Bowler,2000000,60
+Mark Wood,Bowler,10000000,80
+Imran Tahir,Bowler,3000000,66
+Mitchell Santner,All-Rounder,20000000,90
+Lungisani Ngidi,Bowler,2000000,67
+Asif K M,Bowler,15000000,87
+N Jagadeesan,Wicket Keeper,20000000,95
+Kanishk Seth,All-Rounder,10000000,82
+Monu Singh,Bowler,10000000,89
+Dhruv Shorey,All-Rounder,3000000,64
+Kshitiz Sharma,All-Rounder,2000000,68
+Chaitanya Bishnoi,All-Rounder,7500000,80
+Kagiso Rabada,Bowler,10000000,89
+Gautam Gambhir,Batsman,2000000,63
+Avesh Khan,Bowler,2000000,66
+Abhishek Sharma,All-Rounder,20000000,99
+Manjot Kalra,Batsman,15000000,87
+Sandeep Lamichhane,Bowler,5000000,75
+Sayan Ghosh,Bowler,2000000,60
+Ravichandran Ashwin,All-Rounder,15000000,90
+Mujeeb Zadran,Bowler,5000000,73
+Christopher Gayle,Batsman,10000000,85
+Ben Dwarshuis,Bowler,15000000,88
+Manzoor Dar,All-Rounder,2000000,67
+Mayank Dagar,All-Rounder,3000000,68
+Kamlesh Nagarkoti,All-Rounder,10000000,82
+Shubman Gill,Batsman,2000000,63
+Rinku Singh,Batsman,2000000,62
+Cameron Delport,All-Rounder,7500000,78
+Javon Searless,All-Rounder,2000000,69
+Ishank Jaggi,Batsman,15000000,87
+Kieron Pollard,All-Rounder,7500000,81
+Evin Lewis,Batsman,2000000,60
+Jason Behrendorff,Bowler,15000000,91
+Akila Dhananjaya,Bowler,15000000,87
+Nidheesh M D Dinesan,Bowler,7500000,82
+Mayank Markande,Bowler,20000000,93
+Sharad Lumba ,Batsman,15000000,91
+Anukul Roy,All-Rounder,3000000,67
+Benjamin Stokes,All-Rounder,3000000,63
+Jofra Archer,All-Rounder,3000000,67
+Ajinkya Rahane,Batsman,20000000,91
+Darcy Short,All-Rounder,3000000,66
+Zahir Khan Pakteen,Bowler,15000000,90
+Dushmantha Chameera,Bowler,20000000,93
+Aryaman Vikram Birla,All-Rounder,5000000,70
+Midhun S,All-Rounder,7500000,78
+Prashant Chopra,Wicket Keeper,15000000,85
+Jatin Saxena,All-Rounder,3000000,63
+M.S. Washington Sundar,All-Rounder,7500000,77
+Navdeep Saini,Bowler,2000000,60
+Mohammed Siraj,Bowler,2000000,66
+Colin De Grandhomme,All-Rounder,20000000,95
+Mandeep Singh,All-Rounder,20000000,98
+Kulwant Khejroliya,Bowler,20000000,99
+Aniket Choudhary,Bowler,3000000,62
+Rashid Khan Arman,Bowler,5000000,70
+Shikhar Dhawan,Batsman,7500000,79
+Shreevats Goswami,Wicket Keeper,20000000,97
+Mohammad Nabi,All-Rounder,5000000,72
+Basil Thampi,Bowler,2000000,64
+Billy Stanlake,Batsman,15000000,94
+T Natarajan,Bowler,2000000,63
+Bipul Sharma,All-Rounder,7500000,80
+Syed Mehdi Hasan,All-Rounder,2000000,64
+Tanmay Agarwal,Batsman,2000000,61
+Ankeet Bawane,Batsman,5000000,72
+Munaf Patel,Bowler,2000000,60
+Shubam Agrawal,All-Rounder,10000000,80
+Tejas Singh Baroka,Bowler,7500000,78
+Chirag Suri,Batsman,2000000,63
+Pratham Singh,All-Rounder,20000000,95
+Shelley Shaurya,Bowler,5000000,72
+Darren Bravo,Batsman,20000000,96
+Rovman Powell,All-Rounder,10000000,88
+R. Sanjay Yadav,All-Rounder,20000000,97
+Asela Gunarathna,Batsman,7500000,84
+Saurabh Kumar,Bowler,3000000,65
+Milind Tandon,All-Rounder,10000000,82
+Rahul Ajay Tripathi,All-Rounder,20000000,90
+Tymal Mills,Bowler,7500000,79
+Bhagath Varma ,All-Rounder ,10000000,89
+Ajay Mandal ,All-Rounder ,10000000,81
+Nishant Sindhu ,All-Rounder ,2000000,65
+Shaik Rasheed ,Batter ,20000000,97
+Ben Stokes ,All-Rounder ,10000000,89
+Phil Salt ,Wicket-Keeper ,20000000,96
+Ishant Sharma ,Bowler ,3000000,64
+Mukesh Kumar ,Bowler ,5000000,72
+Shivam Mavi ,Bowler ,15000000,91
+Urvil Patel ,Wicket-Keeper ,7500000,84
+Mohit Sharma ,Bowler ,15000000,87
+Joshua Little ,Bowler ,10000000,86
+Kane Williamson ,Batter ,5000000,76
+Kulwant Khejroliya ,Bowler ,10000000,83
+David Wiese ,All-Rounder ,3000000,68
+Litton Das ,Wicket-Keeper ,2000000,66
+Suyash Sharma ,Bowler ,3000000,69
+Amit Mishra ,Bowler ,3000000,69
+Yash Thakur ,Bowler ,7500000,75
+Naveen Ul Haq ,Bowler ,10000000,85
+Nehal Wadhera ,All-Rounder ,3000000,66
+Raghav Goyal ,Bowler ,20000000,97
+Cameron Green ,All-Rounder ,10000000,87
+Duan Jansen ,All-Rounder ,20000000,90
+Shams Mulani ,All-Rounder ,20000000,97
+Harpreet Bhatia ,Batter ,3000000,68
+Shivam Singh ,All-Rounder ,5000000,70
+Vidwath Kaverappa ,Bowler ,3000000,68
+Mohit Rathee ,All-Rounder ,15000000,89
+Sam Curran ,All-Rounder ,3000000,62
+Sikandar Raza ,All-Rounder ,7500000,79
+Adam Zampa ,Bowler ,15000000,89
+Abdul P A ,All-Rounder ,5000000,72
+Akash Vashisht ,All-Rounder ,20000000,96
+Donovan Ferreira ,Wicket-Keeper ,15000000,88
+Kunal Rathore ,Wicket-Keeper ,5000000,73
+Joe Root ,Batter ,3000000,67
+Sonu Yadav ,All-Rounder ,20000000,95
+Himanshu Sharma ,Bowler ,10000000,87
+Avinash Singh ,Bowler ,15000000,89
+Manoj Bhandage ,All-Rounder ,5000000,74
+Will Jacks ,Batter ,7500000,84
+Reece Topley ,Bowler ,15000000,87
+Rajan Kumar ,Bowler ,2000000,69
+Sanvir Singh ,All-Rounder ,10000000,89
+Heinrich Klaasen ,Wicket-Keeper ,10000000,88
+Akeal Hosein ,Bowler ,5000000,78
+Adil Rashid ,Bowler ,5000000,74
+Vivrant Sharma ,All-Rounder ,15000000,89
+Samarth Vyas ,All-Rounder ,2000000,60
+Upendra Singh Yadav ,Wicket-Keeper ,15000000,92
+Nitish Kumar Reddy ,Wicket-Keeper ,15000000,94
+Mayank Agarwal ,Batter ,2000000,69
+Mayank Dagar ,All-Rounder ,7500000,80

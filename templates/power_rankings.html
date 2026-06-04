@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}Power Rankings{% endblock %}
+
+{% block content %}
+<div class="container py-4 animated-fade-in">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="fw-bold"><i class="bi bi-bar-chart-fill text-warning me-2"></i>Global <span class="text-success">Power Rankings</span></h1>
+        <a href="/dashboard/v2" class="btn btn-outline-secondary shadow-sm">← Back</a>
+    </div>
+
+    <div class="card glass-card border-0 shadow-lg mb-5">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle text-center">
+                    <thead class="table-dark">
+                        <tr>
+                            <th class="py-3">Rank</th>
+                            <th class="py-3 text-start ps-5">Franchise</th>
+                            <th class="py-3">Power Score</th>
+                            <th class="py-3">Champion Odds</th>
+                            <th class="py-3">Confidence</th>
+                            <th class="py-3">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in rankings %}
+                        {% set t_color = TEAM_THEME.get(r.team_name, {}).get('primary', '#1D4ED8') %}
+                        <tr class="{% if loop.index == 1 %}bg-warning bg-opacity-10{% elif loop.index == 2 %}bg-secondary bg-opacity-10{% elif loop.index == 3 %}bg-danger bg-opacity-10{% endif %}">
+                            <td class="fw-bold fs-4">
+                                {% if loop.index == 1 %}
+                                <span class="text-warning"><i class="bi bi-trophy-fill"></i> 1</span>
+                                {% elif loop.index == 2 %}
+                                <span class="text-secondary"><i class="bi bi-award-fill"></i> 2</span>
+                                {% elif loop.index == 3 %}
+                                <span style="color: #CD7F32"><i class="bi bi-award-fill"></i> 3</span>
+                                {% else %}
+                                <span class="text-muted">#{{ loop.index }}</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-start ps-5 fw-bold fs-5 d-flex align-items-center">
+                                <img src="{{ url_for('static', filename=TEAM_LOGOS.get(r.team_name, 'images/teams/mi.png')) }}" class="team-logo-small rounded-circle shadow-sm me-3" style="background: {{ t_color }}">
+                                <span style="color: {{ t_color }}">{{ r.team_name }}</span>
+                            </td>
+                            <td>
+                                <span class="badge rounded-pill fs-5 shadow-sm px-3 py-2" style="background-color: {{ t_color }}">{{ "%.1f"|format(r.power_score) }}</span>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <span class="fw-bold text-success me-2 fs-6" style="min-width: 60px;">{{ "%.1f"|format(r.champion_prob * 100) }}%</span>
+                                    <div class="progress shadow-sm flex-grow-1" style="height: 12px; max-width: 150px;">
+                                        <div class="progress-bar bg-success" style="width: {{ r.champion_prob * 100 }}%"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge rounded-pill px-3 py-2 shadow-sm
+                                    {% if r.confidence == 'High' %}bg-success
+                                    {% elif r.confidence == 'Medium' %}bg-warning text-dark
+                                    {% else %}bg-danger{% endif %}">
+                                    {{ r.confidence }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="/team-analysis/{{ r.team_name }}" class="btn btn-outline-dark btn-sm rounded-pill px-3 fw-bold">Analyze</a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="py-5 text-muted text-center fs-5">No rankings available yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block title %}Live Auction Monitor{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0 fw-bold"><i class="bi bi-broadcast text-danger me-2 animated-pulse"></i>Live Auction Monitor</h1>
+    <a href="/admin" class="btn btn-outline-dark"><i class="bi bi-arrow-left"></i> Back to Dashboard</a>
+</div>
+
+<div class="row g-4">
+    <!-- Active Player Info -->
+    <div class="col-lg-4">
+        <div class="card shadow-sm border-0 mb-4 bg-dark text-white">
+            <div class="card-body p-4 text-center">
+                <h6 class="text-warning fw-bold text-uppercase mb-3" id="monitor_auction_state">WAITING...</h6>
+                
+                <div class="rounded-circle bg-white text-dark d-flex align-items-center justify-content-center mx-auto mb-3 shadow" style="width: 80px; height: 80px; font-size: 2rem;" id="monitor_rating">
+                    --
+                </div>
+                
+                <h2 class="fw-bold mb-1" id="monitor_player_name">No Active Player</h2>
+                <p class="text-white-50 mb-4" id="monitor_player_info">--</p>
+                
+                <div class="bg-white text-dark rounded p-3 mb-3">
+                    <small class="text-muted fw-bold d-block text-uppercase">Current Bid</small>
+                    <h1 class="mb-0 text-success fw-900" id="monitor_current_bid">₹0.00 Cr</h1>
+                </div>
+                
+                <div class="border border-secondary rounded p-3 text-start">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <small class="text-white-50 fw-bold d-block text-uppercase">Highest Bidder</small>
+                            <h4 class="mb-0 fw-bold" id="monitor_highest_bidder">--</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card shadow-sm border-0 bg-white">
+            <div class="card-header bg-white border-bottom-0 pt-3">
+                <h6 class="fw-bold mb-0"><i class="bi bi-crosshair text-danger me-2"></i>Active Competitors</h6>
+            </div>
+            <div class="card-body" id="monitor_interested_teams">
+                <p class="text-muted small">No teams currently bidding.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Live Event Feed -->
+    <div class="col-lg-8">
+        <div class="card shadow-sm border-0 h-100 bg-white">
+            <div class="card-header bg-light border-bottom-0 py-3 d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold mb-0"><i class="bi bi-activity text-primary me-2"></i>God-View Event Feed</h5>
+                <span class="badge bg-danger animated-pulse">LIVE</span>
+            </div>
+            <div class="card-body p-0" style="height: 600px; overflow-y: auto;">
+                <ul class="list-group list-group-flush" id="monitor_event_log">
+                    <li class="list-group-item text-center text-muted py-5 border-0">Waiting for auction events...</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let lastBid = 0;
+    let lastState = "";
+    let currentPlayer = "";
+    let currentLogLength = 0;
+
+    setInterval(function() {
+        fetch('/auction/state')
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'finished') {
+                    document.getElementById('monitor_auction_state').innerText = "AUCTION ENDED";
+                    return;
+                }
+                
+                // Update basic text nodes safely
+                if (data.player_name) {
+                    document.getElementById('monitor_player_name').innerText = data.player_name;
+                    document.getElementById('monitor_rating').innerText = data.player_rating;
+                    document.getElementById('monitor_current_bid').innerText = "₹" + data.current_bid.toFixed(2) + " Cr";
+                    document.getElementById('monitor_highest_bidder').innerText = data.highest_bidder || "None";
+                    document.getElementById('monitor_auction_state').innerText = data.auction_state.replace('_', ' ');
+                }
+                
+                // Update interested teams
+                if (data.interested_teams) {
+                    let teamHtml = '<div class="d-flex flex-wrap gap-2">';
+                    data.interested_teams.forEach(t => {
+                        teamHtml += `<span class="badge bg-dark px-3 py-2 fs-6">${t}</span>`;
+                    });
+                    teamHtml += '</div>';
+                    if (data.interested_teams.length === 0) teamHtml = '<p class="text-muted small">No active competitors.</p>';
+                    document.getElementById('monitor_interested_teams').innerHTML = teamHtml;
+                }
+                
+                // Update event log
+                if (data.recent_events && data.recent_events.length > 0) {
+                    let logHtml = '';
+                    data.recent_events.forEach((event, index) => {
+                        let isNew = index === 0 && data.recent_events.length !== currentLogLength ? 'bg-light border-start border-4 border-primary' : '';
+                        let type = event.event_type;
+                        let text = '';
+                        let badge = '';
+                        let time = event.timestamp ? event.timestamp.substring(11, 19) : '';
+                        
+                        if (['BID', 'AI_BID'].includes(type)) {
+                            text = `<strong>${event.details.team_name}</strong> bid ₹${event.details.amount} Cr`;
+                            badge = '<span class="badge bg-primary rounded-pill">BID</span>';
+                        } else if (['PASS', 'AI_PASS'].includes(type)) {
+                            text = `<span class="text-muted">${event.details.team_name} dropped out</span>`;
+                            badge = '<span class="badge bg-secondary rounded-pill opacity-50">PASS</span>';
+                        } else if (type === 'SOLD') {
+                            text = `<strong class="text-success">SOLD to ${event.details.team_name} for ₹${event.details.amount} Cr!</strong>`;
+                            badge = '🎉';
+                            isNew += ' bg-success bg-opacity-10';
+                        } else if (type === 'UNSOLD') {
+                            text = `<strong class="text-danger">Player UNSOLD</strong>`;
+                            badge = '❌';
+                        } else {
+                            text = `<span class="text-warning fw-bold fst-italic">Auctioneer: ${type.replace('_', ' ')}...</span>`;
+                        }
+                        
+                        logHtml += `
+                            <li class="list-group-item px-4 py-3 d-flex justify-content-between align-items-center border-bottom ${isNew}">
+                                <div>
+                                    <span class="text-muted small me-3 fw-bold" style="font-family: monospace;">${time}</span>
+                                    ${text}
+                                </div>
+                                ${badge}
+                            </li>
+                        `;
+                    });
+                    document.getElementById('monitor_event_log').innerHTML = logHtml;
+                    currentLogLength = data.recent_events.length;
+                }
+            })
+            .catch(err => console.error(err));
+    }, 1000);
+</script>
+{% endblock %}

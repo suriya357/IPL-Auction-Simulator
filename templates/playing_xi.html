@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% block title %}Best Playing XI{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    {% if comparison %}
+    <!-- COMPARISON VIEW -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Playing XI <span class="text-muted fs-4">Comparison</span></h1>
+        <a href="/dashboard/v2" class="btn btn-outline-secondary">← Back to Dashboard</a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">Team Strength Rankings (Playing XI)</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Rank</th>
+                            <th>Team</th>
+                            <th>XI Rating</th>
+                            <th>Batting</th>
+                            <th>Bowling</th>
+                            <th>Balance</th>
+                            <th>Overall Strength</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for t in comparison %}
+                        <tr class="{% if not t.is_complete %}table-warning{% endif %}">
+                            <td class="fw-bold fs-5">#{{ t.rank }}</td>
+                            <td class="fw-bold">{{ t.team_name }}
+                                {% if not t.is_complete %}<span class="badge bg-warning text-dark ms-2">Incomplete</span>{% endif %}
+                            </td>
+                            <td>{{ "%.1f"|format(t.avg_rating) }}</td>
+                            <td>{{ "%.1f"|format(t.batting_strength) }}</td>
+                            <td>{{ "%.1f"|format(t.bowling_strength) }}</td>
+                            <td>{{ "%.0f"|format(t.balance_score) }}</td>
+                            <td><span class="badge bg-primary fs-6">{{ "%.1f"|format(t.overall_strength) }}</span></td>
+                            <td>
+                                <a href="/playing-xi/{{ t.team_name }}" class="btn btn-sm btn-outline-dark">View XI</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {% elif team_data %}
+    <!-- SINGLE TEAM VIEW -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>{{ team_name }} <span class="text-muted fs-4">Best Playing XI</span></h1>
+        <div>
+            <a href="/playing-xi" class="btn btn-outline-primary me-2">Compare Teams</a>
+            <a href="/team-analysis/{{ team_name }}" class="btn btn-outline-secondary">Squad Analysis</a>
+        </div>
+    </div>
+
+    {% if not team_data.is_complete %}
+    <div class="alert alert-warning shadow-sm">
+        <i class="bi bi-exclamation-triangle-fill"></i> {{ team_data.message }} This team does not have a valid starting XI yet.
+    </div>
+    {% endif %}
+
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm border-primary h-100">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Overall Strength</h6>
+                    <h2 class="text-primary mb-0">{{ "%.1f"|format(team_data.strength.overall_strength) }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Avg XI Rating</h6>
+                    <h3 class="mb-0">{{ "%.1f"|format(team_data.strength.avg_rating) }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Batting / Bowling</h6>
+                    <h4 class="mb-0">{{ "%.1f"|format(team_data.strength.batting_strength) }} / {{ "%.1f"|format(team_data.strength.bowling_strength) }}</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Balance Score</h6>
+                    <h3 class="mb-0 {% if team_data.strength.balance_score >= 90 %}text-success{% elif team_data.strength.balance_score >= 70 %}text-warning{% else %}text-danger{% endif %}">
+                        {{ "%.0f"|format(team_data.strength.balance_score) }}
+                    </h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for p in team_data.xi %}
+        <div class="col-md-4 col-sm-6 mb-4">
+            <div class="card shadow-sm h-100 
+                {% if p == team_data.captain %}border-warning
+                {% elif p == team_data.mvp %}border-success
+                {% endif %}">
+                
+                <div class="card-header d-flex justify-content-between align-items-center
+                    {% if p.role == 'Batter' %}bg-primary text-white
+                    {% elif p.role == 'Bowler' %}bg-danger text-white
+                    {% elif p.role == 'All-Rounder' %}bg-success text-white
+                    {% elif p.role == 'Wicket Keeper' %}bg-info text-dark
+                    {% else %}bg-secondary text-white{% endif %}">
+                    <span class="fw-bold">{{ p.role }}</span>
+                    <span class="badge bg-light text-dark">{{ p.rating }}</span>
+                </div>
+                
+                <div class="card-body">
+                    <h5 class="card-title">{{ p.name }}</h5>
+                    <p class="card-text text-muted mb-2">₹{{ "%.2f"|format(p.price) }} Cr</p>
+                    
+                    <div class="mt-2">
+                        {% if p == team_data.captain %}
+                        <span class="badge bg-warning text-dark me-1">Captain (Highest Rated)</span>
+                        {% endif %}
+                        
+                        {% if p == team_data.mvp %}
+                        <span class="badge bg-success me-1">MVP (Best Value)</span>
+                        {% endif %}
+                        
+                        {% if p == team_data.most_expensive %}
+                        <span class="badge bg-danger">Most Expensive</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

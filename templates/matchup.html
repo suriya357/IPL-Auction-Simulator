@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}Head-to-Head Predictor{% endblock %}
+
+{% block content %}
+<div class="container py-4 animated-fade-in">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="fw-bold"><i class="bi bi-lightning-charge-fill text-warning me-2"></i>Head-to-Head <span class="text-success">Predictor</span></h1>
+        <a href="/dashboard/v2" class="btn btn-outline-secondary shadow-sm">← Back</a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card glass-card shadow-sm border-0 mb-4">
+                <div class="card-body p-4">
+                    <form method="POST" class="row g-3 align-items-end justify-content-center">
+                        <div class="col-md-4 text-center">
+                            <label class="form-label fw-bold text-uppercase text-muted mb-3">Team A</label>
+                            <select name="team_a" class="form-select form-select-lg shadow-sm" required>
+                                <option value="">Select Challenger...</option>
+                                {% for team in teams %}
+                                <option value="{{ team }}">{{ team }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2 text-center pb-2">
+                            <span class="badge bg-danger rounded-circle p-3 fs-5 shadow">VS</span>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <label class="form-label fw-bold text-uppercase text-muted mb-3">Team B</label>
+                            <select name="team_b" class="form-select form-select-lg shadow-sm" required>
+                                <option value="">Select Challenger...</option>
+                                {% for team in teams %}
+                                <option value="{{ team }}">{{ team }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-12 mt-4 text-center">
+                            <button type="submit" class="btn btn-primary btn-lg px-5 rounded-pill shadow fw-bold"><i class="bi bi-cpu-fill me-2"></i> ANALYZE MATCHUP</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            {% if matchup %}
+            {% set c_a = TEAM_THEME.get(matchup.a_name, {}).get('primary', '#1D4ED8') %}
+            {% set c_b = TEAM_THEME.get(matchup.b_name, {}).get('primary', '#1D4ED8') %}
+            <div class="card glass-card border-0 shadow-lg mt-5 overflow-hidden">
+                <div class="row g-0">
+                    <div class="col-6 py-5 text-center text-white position-relative" style="background: {{ c_a }}">
+                        <img src="{{ url_for('static', filename=TEAM_LOGOS.get(matchup.a_name, 'images/teams/mi.png')) }}" class="team-logo-large bg-white rounded-circle shadow-lg mb-3">
+                        <h2 class="fw-bold text-white shadow-sm d-inline-block">{{ matchup.a_name }}</h2>
+                        <div class="display-3 fw-bold mt-3">{{ "%.1f"|format(matchup.a_prob) }}%</div>
+                    </div>
+                    <div class="col-6 py-5 text-center text-white position-relative" style="background: {{ c_b }}">
+                        <img src="{{ url_for('static', filename=TEAM_LOGOS.get(matchup.b_name, 'images/teams/mi.png')) }}" class="team-logo-large bg-white rounded-circle shadow-lg mb-3">
+                        <h2 class="fw-bold text-white shadow-sm d-inline-block">{{ matchup.b_name }}</h2>
+                        <div class="display-3 fw-bold mt-3">{{ "%.1f"|format(matchup.b_prob) }}%</div>
+                    </div>
+                </div>
+                
+                <div class="card-body text-center p-5 bg-white">
+                    <h4 class="text-uppercase fw-bold text-muted mb-4">Win Probability Split</h4>
+                    <div class="progress shadow-sm rounded-pill" style="height: 40px; font-size: 1.2rem;">
+                        <div class="progress-bar fw-bold" role="progressbar" style="width: {{ matchup.a_prob }}%; background-color: {{ c_a }}">
+                            {{ TEAM_THEME.get(matchup.a_name, {}).get('short', matchup.a_name) }}
+                        </div>
+                        <div class="progress-bar fw-bold" role="progressbar" style="width: {{ matchup.b_prob }}%; background-color: {{ c_b }}">
+                            {{ TEAM_THEME.get(matchup.b_name, {}).get('short', matchup.b_name) }}
+                        </div>
+                    </div>
+                    
+                    <div class="mt-5">
+                        {% if matchup.a_prob > matchup.b_prob %}
+                        <h2 style="color: {{ c_a }}" class="fw-bold"><i class="bi bi-trophy-fill text-warning me-2"></i> {{ matchup.a_name }} is favored!</h2>
+                        {% elif matchup.b_prob > matchup.a_prob %}
+                        <h2 style="color: {{ c_b }}" class="fw-bold"><i class="bi bi-trophy-fill text-warning me-2"></i> {{ matchup.b_name }} is favored!</h2>
+                        {% else %}
+                        <h2 class="text-muted fw-bold"><i class="bi bi-arrow-left-right me-2"></i> It's a dead heat!</h2>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

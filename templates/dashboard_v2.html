@@ -1,0 +1,276 @@
+{% extends 'base.html' %}
+{% block title %}Auction Analytics{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Auction Analytics</h1>
+        <div>
+            <a href="/predictor" class="btn btn-outline-dark me-2 fw-bold">🔮 Predictor</a>
+            <a href="/simulator" class="btn btn-outline-danger me-2 fw-bold">🎮 Simulator</a>
+            <a href="/matchup" class="btn btn-outline-primary me-2 fw-bold">⚔️ Matchup</a>
+            <a href="/playing-xi" class="btn btn-warning me-2 fw-bold">🏆 Best XI</a>
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">
+                    Export CSV
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/export/csv/summary">Summary</a></li>
+                    <li><a class="dropdown-item" href="/export/csv/results">Results</a></li>
+                    <li><a class="dropdown-item" href="/export/csv/squads">Squads</a></li>
+                </ul>
+            </div>
+            <div class="btn-group ms-2">
+                <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown">
+                    Export Excel
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/export/xlsx/summary">Summary</a></li>
+                    <li><a class="dropdown-item" href="/export/xlsx/results">Results</a></li>
+                    <li><a class="dropdown-item" href="/export/xlsx/squads">Squads</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 1: OVERVIEW -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card text-center h-100 shadow-sm border-primary hover-lift glass-card">
+                <div class="card-body">
+                    <h6 class="text-muted text-uppercase mb-1"><i class="bi bi-people-fill text-primary"></i> Total Sold</h6>
+                    <h3 class="mb-0 fw-bold">{{ overview.total_sold }}</h3>
+                    <small class="text-muted">Unsold: {{ overview.total_unsold }}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center h-100 shadow-sm border-success hover-lift glass-card">
+                <div class="card-body">
+                    <h6 class="text-muted text-uppercase mb-1"><i class="bi bi-cash-stack text-success"></i> Total Spend</h6>
+                    <h3 class="mb-0 fw-bold">₹{{ "%.2f"|format(overview.total_spend) }} Cr</h3>
+                    <small class="text-muted">Avg: ₹{{ "%.2f"|format(overview.avg_sale_price) }} Cr</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center h-100 shadow-sm border-danger hover-lift glass-card">
+                <div class="card-body">
+                    <h6 class="text-muted text-uppercase mb-1"><i class="bi bi-fire text-danger"></i> Most Expensive</h6>
+                    <h3 class="mb-0 fw-bold text-danger">₹{{ "%.2f"|format(overview.most_expensive.sold_price) if overview.most_expensive else '0.00' }} Cr</h3>
+                    <small class="text-muted fw-bold">{{ overview.most_expensive.name if overview.most_expensive else '-' }}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center h-100 shadow-sm border-info hover-lift glass-card">
+                <div class="card-body">
+                    <h6 class="text-muted text-uppercase mb-1"><i class="bi bi-star-fill text-warning"></i> Highest Rated</h6>
+                    <h3 class="mb-0 fw-bold text-info">{{ overview.highest_rated.rating if overview.highest_rated else 0 }}</h3>
+                    <small class="text-muted fw-bold">{{ overview.highest_rated.name if overview.highest_rated else '-' }}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ACHIEVEMENTS -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h4 class="mb-3"><i class="bi bi-award-fill text-warning"></i> Tournament Superlatives</h4>
+            <div class="d-flex flex-wrap gap-3">
+                {% if achievements.best_squad %}
+                <div class="card flex-fill shadow-sm border-0 bg-primary text-white hover-lift">
+                    <div class="card-body text-center p-3">
+                        <small class="text-uppercase fw-bold text-white-50">Best Overall Squad</small>
+                        <h4 class="mt-1 mb-0">{{ achievements.best_squad.team_name }}</h4>
+                        <img src="{{ url_for('static', filename=TEAM_LOGOS.get(achievements.best_squad.team_name, 'images/teams/mi.png')) }}" class="team-logo-small mt-2 bg-white rounded-circle">
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if achievements.highest_xi %}
+                <div class="card flex-fill shadow-sm border-0 bg-success text-white hover-lift">
+                    <div class="card-body text-center p-3">
+                        <small class="text-uppercase fw-bold text-white-50">Highest Rated XI</small>
+                        <h4 class="mt-1 mb-0">{{ achievements.highest_xi.team_name }}</h4>
+                        <img src="{{ url_for('static', filename=TEAM_LOGOS.get(achievements.highest_xi.team_name, 'images/teams/mi.png')) }}" class="team-logo-small mt-2 bg-white rounded-circle">
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if achievements.best_bowling %}
+                <div class="card flex-fill shadow-sm border-0 bg-danger text-white hover-lift">
+                    <div class="card-body text-center p-3">
+                        <small class="text-uppercase fw-bold text-white-50">Strongest Bowling Attack</small>
+                        <h4 class="mt-1 mb-0">{{ achievements.best_bowling.team_name }}</h4>
+                        <img src="{{ url_for('static', filename=TEAM_LOGOS.get(achievements.best_bowling.team_name, 'images/teams/mi.png')) }}" class="team-logo-small mt-2 bg-white rounded-circle">
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if achievements.best_value %}
+                <div class="card flex-fill shadow-sm border-0 bg-warning text-dark hover-lift">
+                    <div class="card-body text-center p-3">
+                        <small class="text-uppercase fw-bold text-dark-50">Steal of the Draft</small>
+                        <h4 class="mt-1 mb-0">{{ achievements.best_value.player }}</h4>
+                        <span class="badge bg-dark mt-2">{{ achievements.best_value.team }}</span>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 7: EFFICIENCY METRICS -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">Advanced Efficiency Metrics</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 text-center mb-3">
+                    <h6 class="text-muted">Best Value Team</h6>
+                    <span class="badge bg-success fs-6">{{ efficiency.best_value_team or 'N/A' }}</span>
+                </div>
+                <div class="col-md-4 text-center mb-3">
+                    <h6 class="text-muted">Most Aggressive Buyer</h6>
+                    <span class="badge bg-danger fs-6">{{ efficiency.most_aggressive_buyer or 'N/A' }}</span>
+                </div>
+                <div class="col-md-4 text-center mb-3">
+                    <h6 class="text-muted">Highest Avg Rating</h6>
+                    <span class="badge bg-primary fs-6">{{ efficiency.highest_avg_rating_squad or 'N/A' }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 2 & 6: TEAM SPENDING & STRENGTH PREVIEW -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white d-flex justify-content-between">
+                    <h5 class="mb-0">Team Spending & Strength Rankings</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Team</th>
+                                    <th>Players</th>
+                                    <th>Spent</th>
+                                    <th>Remaining</th>
+                                    <th>Avg Rating</th>
+                                    <th>Utilization</th>
+                                    <th>Strength Score</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for team in team_spending %}
+                                {% set strength = strength_preview | selectattr("team_name", "equalto", team.team_name) | first %}
+                                {% set t_color = TEAM_THEME.get(team.team_name, {}).get('primary', '#1D4ED8') %}
+                                <tr>
+                                    <td class="fw-bold d-flex align-items-center">
+                                        <img src="{{ url_for('static', filename=TEAM_LOGOS.get(team.team_name, 'images/teams/mi.png')) }}" class="team-logo-small rounded-circle me-2" style="background: {{ t_color }}">
+                                        {{ team.team_name }}
+                                    </td>
+                                    <td class="align-middle">{{ team.players_purchased }}</td>
+                                    <td class="align-middle">₹{{ "%.2f"|format(team.total_spend) }} Cr</td>
+                                    <td class="align-middle">₹{{ "%.2f"|format(team.remaining_budget) }} Cr</td>
+                                    <td class="align-middle">{{ "%.1f"|format(team.avg_rating) }}</td>
+                                    <td class="align-middle">
+                                        <div class="progress" style="height: 20px;">
+                                            <div class="progress-bar {% if team.utilization > 90 %}bg-danger{% elif team.utilization > 70 %}bg-warning{% else %}bg-success{% endif %}" 
+                                                 role="progressbar" style="width: {{ team.utilization }}%">
+                                                {{ "%.0f"|format(team.utilization) }}%
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="align-middle">
+                                        <span class="badge fs-6" style="background-color: {{ t_color }}">{{ "%.1f"|format(strength.strength_score) if strength else 0 }}</span>
+                                    </td>
+                                    <td class="align-middle">
+                                        <a href="/playing-xi/{{ team.team_name }}" class="btn btn-sm btn-outline-primary me-1"><i class="bi bi-trophy"></i> XI</a>
+                                        <a href="/team-analysis/{{ team.team_name }}" class="btn btn-sm btn-outline-dark"><i class="bi bi-graph-up"></i></a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 3 & 4: TOP PURCHASES -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Top 10 Value Purchases</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-striped mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Player</th>
+                                    <th>Team</th>
+                                    <th>Rating</th>
+                                    <th>Price</th>
+                                    <th>Value Score</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for p in top_value %}
+                                <tr>
+                                    <td>{{ p.player }}</td>
+                                    <td><span class="badge bg-secondary">{{ p.team }}</span></td>
+                                    <td>{{ p.rating }}</td>
+                                    <td>₹{{ "%.2f"|format(p.price) }} Cr</td>
+                                    <td class="fw-bold text-success">{{ "%.2f"|format(p.value_score) }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">Top 10 Expensive Purchases</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-striped mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Player</th>
+                                    <th>Team</th>
+                                    <th>Rating</th>
+                                    <th>Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for p in top_expensive %}
+                                <tr>
+                                    <td>{{ p.player }}</td>
+                                    <td><span class="badge bg-secondary">{{ p.team }}</span></td>
+                                    <td>{{ p.rating }}</td>
+                                    <td class="fw-bold text-danger">₹{{ "%.2f"|format(p.price) }} Cr</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

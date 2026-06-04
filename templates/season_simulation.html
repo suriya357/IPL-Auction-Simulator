@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% block title %}Season Simulator{% endblock %}
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="container py-4 animated-fade-in">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="fw-bold"><i class="bi bi-play-circle-fill text-danger me-2"></i>Season <span class="text-danger">Simulator</span></h1>
+        <a href="/dashboard/v2" class="btn btn-outline-secondary shadow-sm">← Back</a>
+    </div>
+
+    <div class="row g-4">
+        <!-- SETTINGS FORM -->
+        <div class="col-md-4">
+            <div class="card glass-card shadow-sm border-0 h-100">
+                <div class="card-header bg-dark text-white border-bottom-0 pt-4">
+                    <h5 class="fw-bold mb-0"><i class="bi bi-gear-fill me-2"></i>Simulation Engine</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-muted text-uppercase small">Iterations (Seasons to simulate)</label>
+                            <select name="iterations" class="form-select form-select-lg shadow-sm">
+                                <option value="100" {% if iterations == 100 %}selected{% endif %}>100 Seasons</option>
+                                <option value="500" {% if iterations == 500 %}selected{% endif %}>500 Seasons</option>
+                                <option value="1000" {% if iterations == 1000 %}selected{% endif %}>1,000 Seasons (Recommended)</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-muted text-uppercase small">Tournament Volatility</label>
+                            <select name="volatility" class="form-select form-select-lg shadow-sm">
+                                <option value="Low" {% if volatility == 'Low' %}selected{% endif %}>Low (Favorites dominate)</option>
+                                <option value="Medium" {% if volatility == 'Medium' %}selected{% endif %}>Medium (Realistic variance)</option>
+                                <option value="High" {% if volatility == 'High' %}selected{% endif %}>High (Frequent upsets)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-danger btn-lg w-100 fw-bold shadow mt-2"><i class="bi bi-cpu-fill me-2"></i> RUN SIMULATION</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- VISUALIZATION -->
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0 h-100 hover-lift">
+                <div class="card-header bg-white border-bottom-0 pt-4">
+                    <h5 class="fw-bold mb-0"><i class="bi bi-bar-chart-fill text-danger me-2"></i>Champion Frequencies ({{ iterations }} Iterations)</h5>
+                </div>
+                <div class="card-body">
+                    {% if results %}
+                    <canvas id="simChart" height="120"></canvas>
+                    {% else %}
+                    <div class="d-flex align-items-center justify-content-center h-100 text-muted flex-column">
+                        <i class="bi bi-bar-chart display-1 text-light mb-3"></i>
+                        <h5>Click "Run Simulation" to generate results.</h5>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if results %}
+    <!-- RESULTS TABLE -->
+    <div class="card shadow-sm border-0 mt-4">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Rank</th>
+                            <th>Franchise</th>
+                            <th>Total Championships</th>
+                            <th>Win Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in results %}
+                        <tr class="{% if loop.index == 1 %}table-warning{% endif %}">
+                            <td class="ps-4 fw-bold {% if loop.index == 1 %}text-warning{% else %}text-muted{% endif %}">
+                                {% if loop.index == 1 %}<i class="bi bi-trophy-fill me-1"></i>{% endif %}#{{ loop.index }}
+                            </td>
+                            <td class="fw-bold d-flex align-items-center">
+                                <img src="{{ url_for('static', filename=TEAM_LOGOS.get(r.team_name, 'images/teams/mi.png')) }}" class="team-logo-small rounded-circle me-3 shadow-sm" style="background: {{ TEAM_THEME.get(r.team_name, {}).get('primary', '#1D4ED8') }}">
+                                {{ r.team_name }}
+                            </td>
+                            <td class="fw-bold fs-5">{{ r.wins }}</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <span class="badge bg-danger rounded-pill px-3 shadow-sm me-2">{{ "%.1f"|format(r.percentage) }}%</span>
+                                    <div class="progress flex-grow-1 shadow-sm" style="height: 6px; max-width: 100px;">
+                                        <div class="progress-bar bg-danger" style="width: {{ r.percentage }}%"></div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const ctx = document.getElementById('simChart').getContext('2d');
+        const teamNames = [{% for r in results %}"{{ TEAM_THEME.get(r.team_name, {}).get('short', r.team_name) }}",{% endfor %}];
+        const wins = [{% for r in results %}{{ r.wins }},{% endfor %}];
+        const teamColors = [{% for r in results %}"{{ TEAM_THEME.get(r.team_name, {}).get('primary', '#1D4ED8') }}",{% endfor %}];
+        
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: teamNames,
+                datasets: [{
+                    label: 'Championships Won',
+                    data: wins,
+                    backgroundColor: teamColors,
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: { borderDash: [2, 4] } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    });
+    </script>
+    {% endif %}
+</div>
+{% endblock %}

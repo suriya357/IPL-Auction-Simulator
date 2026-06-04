@@ -1,0 +1,268 @@
+{% extends 'base.html' %}
+
+{% block title %}Auction Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1>Auction Analytics Dashboard</h1>
+    <p class="text-muted">A professional overview of auction results, team budgets, squad strength, and sales performance.</p>
+  </div>
+  <div>
+    <a href="/export/auction-results/csv" class="btn btn-outline-primary me-2">Export Results CSV</a>
+    <a href="/export/auction-results/excel" class="btn btn-outline-success">Export Results Excel</a>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Total Players Sold</h5>
+        <p class="display-6 mb-0">{{ total_sold }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Total Players Unsold</h5>
+        <p class="display-6 mb-0">{{ total_unsold }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Total Auction Value</h5>
+        <p class="display-6 mb-0">₹{{ total_auction_value }} Cr</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-md-3">
+    <div class="card border-info shadow-sm">
+      <div class="card-body">
+        <h6 class="text-uppercase text-muted">Average Sale Price</h6>
+        <p class="fs-3 mb-0">₹{{ average_sale_price }} Cr</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card border-success shadow-sm">
+      <div class="card-body">
+        <h6 class="text-uppercase text-muted">Most Competitive</h6>
+        <p class="fs-4 mb-0">{{ most_competitive_auction }}</p>
+        <small class="text-success">{{ highest_bids_count }} Bids</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card border-warning shadow-sm">
+      <div class="card-body">
+        <h6 class="text-uppercase text-muted">Lowest Sale Price</h6>
+        <p class="fs-3 mb-0">₹{{ lowest_sale_price }} Cr</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card border-secondary shadow-sm">
+      <div class="card-body">
+        <h6 class="text-uppercase text-muted">Total Teams</h6>
+        <p class="fs-3 mb-0">{{ team_analytics|length }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card mb-4 shadow-sm">
+  <div class="card-header bg-white">
+    <h5 class="mb-0">Most Expensive Purchases</h5>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-striped mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Player Name</th>
+          <th>Team</th>
+          <th>Role</th>
+          <th>Sold Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if top_purchases %}
+          {% for purchase in top_purchases %}
+            <tr>
+              <td>{{ purchase.player_name }}</td>
+              <td>{{ purchase.team_name }}</td>
+              <td>{{ purchase.role }}</td>
+              <td>₹{{ purchase.purchase_price }} Cr</td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr><td colspan="4" class="text-center">No purchases available.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card mb-4 shadow-sm">
+  <div class="card-header bg-white">
+    <h5 class="mb-0">Unsold Players (Recent)</h5>
+  </div>
+  <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+    <table class="table table-striped mb-0">
+      <thead class="table-light sticky-top">
+        <tr>
+          <th>Player Name</th>
+          <th>Role</th>
+          <th>Base Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if unsold_players_list %}
+          {% for player in unsold_players_list %}
+            <tr>
+              <td>{{ player.name }}</td>
+              <td>{{ player.role }}</td>
+              <td>₹{{ player.base_price }} Cr</td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr><td colspan="3" class="text-center">No unsold players yet.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-lg-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-header bg-white">
+        <h5 class="mb-0">Team Budget Analytics</h5>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Team</th>
+              <th>Initial</th>
+              <th>Remaining</th>
+              <th>Spent</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for team in team_analytics %}
+              <tr>
+                <td><a href="/dashboard/team/{{ team.team_name }}">{{ team.team_name }}</a></td>
+                <td>₹{{ team.initial_budget }} Cr</td>
+                <td>₹{{ team.remaining_budget }} Cr</td>
+                <td>₹{{ team.spent }} Cr</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-header bg-white">
+        <h5 class="mb-0">Role Distribution</h5>
+      </div>
+      <div class="card-body">
+        {% for role, count in role_distribution.items() %}
+          <div class="mb-3">
+            <div class="d-flex justify-content-between mb-1">
+              <span>{{ role }}</span>
+              <span class="fw-bold">{{ count }}</span>
+            </div>
+            <div class="progress" style="height: 12px;">
+              <div class="progress-bar bg-info" role="progressbar" style="width: {{ (count / (total_sold or 1) * 100) | int }}%" aria-valuenow="{{ count }}" aria-valuemin="0" aria-valuemax="{{ total_sold }}"></div>
+            </div>
+          </div>
+        {% endfor %}
+        {% if total_sold == 0 %}
+          <p class="text-muted">No roles purchased yet.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-lg-6">
+    <div class="card shadow-sm">
+      <div class="card-header bg-white">
+        <h5 class="mb-0">Auction Leaderboard</h5>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-striped mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Rank</th>
+              <th>Team</th>
+              <th>Strength Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in leaderboard %}
+              <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ row.team_name }}</td>
+                <td>{{ row.strength_score }}</td>
+              </tr>
+            {% endfor %}
+            {% if not leaderboard %}
+              <tr><td colspan="3" class="text-center">No leaderboard data available.</td></tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card shadow-sm">
+      <div class="card-header bg-white">
+        <h5 class="mb-0">Team Performance Metrics</h5>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-striped mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Team</th>
+              <th>Avg Rating</th>
+              <th>Spent</th>
+              <th>Efficiency</th>
+              <th>Remaining</th>
+              <th>Players</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in performance %}
+              <tr>
+                <td>{{ row.team_name }}</td>
+                <td>{{ row.average_rating }}</td>
+                <td>₹{{ row.total_spending }} Cr</td>
+                <td>{{ row.spending_efficiency }}</td>
+                <td>₹{{ row.remaining_budget }} Cr</td>
+                <td>{{ row.players_purchased }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="text-end">
+  <a href="/auction-history" class="btn btn-outline-secondary">View Auction History</a>
+  <a href="/export/team-squads/csv" class="btn btn-outline-primary ms-2">Export Squads CSV</a>
+  <a href="/export/team-squads/excel" class="btn btn-outline-success ms-2">Export Squads Excel</a>
+</div>
+{% endblock %}

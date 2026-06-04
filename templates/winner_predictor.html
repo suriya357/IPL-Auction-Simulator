@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% block title %}IPL Winner Predictor{% endblock %}
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="container py-4 animated-fade-in">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="fw-bold"><i class="bi bi-magic text-primary me-2"></i>Tournament <span class="text-success">Predictor</span></h1>
+        <a href="/dashboard/v2" class="btn btn-outline-secondary shadow-sm">← Back</a>
+    </div>
+
+    <!-- AI INSIGHTS -->
+    <div class="card glass-card shadow-sm border-0 border-start border-info border-5 mb-4">
+        <div class="card-body">
+            <h5 class="mb-3 text-info fw-bold"><i class="bi bi-robot me-2"></i>AI Tournament Insights</h5>
+            <div class="row">
+                {% for insight in insights %}
+                <div class="col-md-6 mb-2">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        <span class="fw-bold text-muted">{{ insight }}</span>
+                    </div>
+                </div>
+                {% else %}
+                <div class="col-12"><span class="text-muted">No insights generated.</span></div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- PROBABILITIES -->
+        <div class="col-lg-5">
+            <div class="card shadow-sm border-0 h-100 hover-lift">
+                <div class="card-header bg-white border-bottom-0 pt-4">
+                    <h5 class="fw-bold mb-0"><i class="bi bi-pie-chart-fill text-primary me-2"></i>Champion Odds</h5>
+                </div>
+                <div class="card-body d-flex align-items-center justify-content-center">
+                    <div style="width: 100%; max-width: 400px;">
+                        <canvas id="championChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- POINTS TABLE PROJECTION -->
+        <div class="col-lg-7">
+            <div class="card shadow-sm border-0 h-100 hover-lift">
+                <div class="card-header bg-dark text-white border-bottom-0">
+                    <h5 class="fw-bold mb-0"><i class="bi bi-table me-2"></i>Projected Points Table</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4">Rank</th>
+                                    <th>Team</th>
+                                    <th>Power Score</th>
+                                    <th>Exp. Wins</th>
+                                    <th>Exp. Points</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in table %}
+                                <tr class="{% if loop.index <= 4 %}table-success{% endif %}">
+                                    <td class="ps-4 fw-bold {% if loop.index <= 4 %}text-success{% else %}text-muted{% endif %}">#{{ row.rank }}</td>
+                                    <td class="fw-bold d-flex align-items-center">
+                                        <img src="{{ url_for('static', filename=TEAM_LOGOS.get(row.team_name, 'images/teams/mi.png')) }}" class="team-logo-small rounded-circle me-2" style="width:24px; height:24px; background: {{ TEAM_THEME.get(row.team_name, {}).get('primary', '#1D4ED8') }}">
+                                        {{ TEAM_THEME.get(row.team_name, {}).get('short', row.team_name) }}
+                                    </td>
+                                    <td>{{ "%.1f"|format(row.power_score) }}</td>
+                                    <td>{{ "%.1f"|format(row.expected_wins) }}</td>
+                                    <td class="fw-bold">{{ "%.1f"|format(row.expected_points) }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- DETAILED PROBABILITIES -->
+    <div class="card shadow-sm border-0 mt-4">
+        <div class="card-header bg-white border-bottom-0 pt-4">
+            <h5 class="fw-bold mb-0"><i class="bi bi-bar-chart-fill text-primary me-2"></i>Detailed Prediction Matrix</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Franchise</th>
+                            <th>Champion Probability</th>
+                            <th>Runner-Up %</th>
+                            <th>Playoffs %</th>
+                            <th>Model Confidence</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in probs %}
+                        <tr>
+                            <td class="ps-4 fw-bold">
+                                <img src="{{ url_for('static', filename=TEAM_LOGOS.get(p.team_name, 'images/teams/mi.png')) }}" class="team-logo-small rounded-circle me-2" style="width:28px; height:28px; background: {{ TEAM_THEME.get(p.team_name, {}).get('primary', '#1D4ED8') }}">
+                                {{ p.team_name }}
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <span class="text-success fw-bold me-2" style="min-width: 50px;">{{ "%.1f"|format(p.champion_prob * 100) }}%</span>
+                                    <div class="progress flex-grow-1 shadow-sm" style="height: 10px; max-width: 150px;">
+                                        <div class="progress-bar bg-success" style="width: {{ p.champion_prob * 100 }}%"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-muted fw-bold">{{ "%.1f"|format(p.runner_up_prob * 100) }}%</td>
+                            <td class="fw-bold">{{ "%.1f"|format(p.playoff_prob * 100) }}%</td>
+                            <td>
+                                <span class="badge rounded-pill px-3 py-2 shadow-sm
+                                    {% if p.confidence == 'High' %}bg-success
+                                    {% elif p.confidence == 'Medium' %}bg-warning text-dark
+                                    {% else %}bg-danger{% endif %}">
+                                    {{ p.confidence }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const ctx = document.getElementById('championChart').getContext('2d');
+    
+    const teamNames = [{% for p in probs %}"{{ TEAM_THEME.get(p.team_name, {}).get('short', p.team_name) }}",{% endfor %}];
+    const winProbs = [{% for p in probs %}{{ p.champion_prob * 100 }},{% endfor %}];
+    const teamColors = [{% for p in probs %}"{{ TEAM_THEME.get(p.team_name, {}).get('primary', '#1D4ED8') }}",{% endfor %}];
+    
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: teamNames,
+            datasets: [{
+                data: winProbs,
+                backgroundColor: teamColors,
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' }
+            },
+            cutout: '65%'
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ action }} Team{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <h1>{{ action }} Team</h1>
+    <form method="POST">
+      <div class="mb-3">
+        <label class="form-label">Team Name</label>
+        <input class="form-control" type="text" name="team_name" value="{{ team.team_name if team.team_name else '' }}" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Budget</label>
+        <input class="form-control" type="number" step="0.01" name="budget" value="{{ team.budget if team.budget else '' }}" required>
+      </div>
+      <button class="btn btn-primary" type="submit">{{ action }} Team</button>
+      <a class="btn btn-secondary" href="/teams">Cancel</a>
+    </form>
+  </div>
+</div>
+{% endblock %}

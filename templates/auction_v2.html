@@ -1,0 +1,390 @@
+{% extends 'base.html' %}
+
+{% block title %}Live Auction Studio{% endblock %}
+
+{% block content %}
+<style>
+    /* Broadcast Studio Styling */
+    body { background-color: #0b0f19; color: #fff; }
+    .studio-card { background: rgba(25, 33, 50, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
+    
+    /* Animations */
+    .sold-overlay {
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgba(16, 185, 129, 0.95); z-index: 9999;
+        display: flex; flex-direction: column; justify-content: center; align-items: center;
+        opacity: 0; pointer-events: none; transition: opacity 0.5s ease-in-out;
+    }
+    .unsold-overlay {
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgba(239, 68, 68, 0.95); z-index: 9999;
+        display: flex; flex-direction: column; justify-content: center; align-items: center;
+        opacity: 0; pointer-events: none; transition: opacity 0.5s ease-in-out;
+    }
+    .overlay-active { opacity: 1; pointer-events: all; }
+    
+    .team-logo-wall { opacity: 0.4; filter: grayscale(100%); transition: all 0.3s ease; }
+    .team-logo-wall.active { opacity: 1; filter: grayscale(0%); transform: scale(1.05); border-color: #fff !important; }
+    .team-logo-wall.leading { box-shadow: 0 0 20px rgba(255, 193, 7, 0.6); border: 2px solid #ffc107 !important; filter: grayscale(0%); opacity: 1; }
+    
+    /* Ticker */
+    .ticker-wrap {
+        position: fixed; bottom: 0; width: 100%; overflow: hidden; height: 40px;
+        background-color: #0a2540; padding-left: 100%; box-sizing: content-box; z-index: 1000;
+        border-top: 2px solid #ffc107;
+    }
+    .ticker {
+        display: inline-block; height: 40px; line-height: 40px; white-space: nowrap;
+        padding-right: 100%; box-sizing: content-box; animation-iteration-count: infinite;
+        animation-timing-function: linear; animation-name: ticker; animation-duration: 30s;
+    }
+    .ticker-item { display: inline-block; padding: 0 2rem; font-weight: bold; font-family: monospace; }
+    @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
+</style>
+
+<!-- Fullscreen Overlays -->
+<div id="soldOverlay" class="sold-overlay">
+    <h1 class="display-1 fw-900 text-white mb-4" style="font-size: 8rem; text-shadow: 0 0 30px rgba(0,0,0,0.5);">SOLD!</h1>
+    <h2 class="display-4 fw-bold text-white mb-3">{{ player.name }}</h2>
+    <div class="d-flex align-items-center bg-dark rounded-pill px-5 py-3 shadow-lg mb-4 border border-white border-3">
+        <img id="overlaySoldLogo" src="" class="rounded-circle me-4 bg-white" style="width: 80px; height: 80px; object-fit: cover;">
+        <h1 class="mb-0 fw-900 text-white" id="overlaySoldTeam" style="font-size: 4rem;">--</h1>
+    </div>
+    <h1 class="display-3 fw-900 text-warning" id="overlaySoldPrice" style="text-shadow: 0 0 20px rgba(0,0,0,0.8);">--</h1>
+</div>
+
+<div id="unsoldOverlay" class="unsold-overlay">
+    <i class="bi bi-x-circle text-white mb-4" style="font-size: 8rem; text-shadow: 0 0 30px rgba(0,0,0,0.5);"></i>
+    <h1 class="display-1 fw-900 text-white mb-3" style="text-shadow: 0 0 30px rgba(0,0,0,0.5);">UNSOLD</h1>
+    <h2 class="display-4 fw-bold text-white opacity-75">{{ player.name }}</h2>
+</div>
+
+<!-- Main Studio Layout -->
+<div class="container-fluid px-4 py-3 mb-5" style="padding-bottom: 60px !important;">
+    
+    <!-- Top Header Bar -->
+    <div class="row align-items-center mb-3">
+        <div class="col-md-4">
+            <h3 class="mb-0 fw-bold text-primary"><i class="bi bi-broadcast text-danger animated-pulse me-2"></i>IPL STUDIOS</h3>
+        </div>
+        <div class="col-md-4 text-center">
+            {% if auction_stage == 'ACCELERATED_ROUND' %}
+            <div class="badge bg-danger fs-5 px-4 py-2 rounded-pill shadow-sm"><i class="bi bi-lightning-charge-fill me-1"></i>ACCELERATED ROUND</div>
+            {% else %}
+            <div class="badge bg-dark border border-warning text-warning fs-5 px-4 py-2 rounded-pill shadow-sm text-uppercase">{{ set_name }}</div>
+            {% endif %}
+        </div>
+        <div class="col-md-4 text-end" id="highest_bidder_header_container">
+            <div class="btn btn-outline-light rounded-pill px-4">
+                <i class="bi bi-person-fill"></i> Your Seat: <strong style="color: {{ TEAM_THEME.get(selected_team, {}).get('primary', '#1D4ED8') }}">{{ selected_team }}</strong>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Center Stage: Player & Bid -->
+        <div class="col-lg-7">
+            <!-- Player Spotlight -->
+            <div class="studio-card rounded-4 overflow-hidden mb-4 shadow-lg position-relative">
+                <div class="position-absolute top-0 end-0 p-3 z-3">
+                    <span class="badge bg-warning text-dark fs-5 shadow"><i class="bi bi-star-fill me-1"></i>{{ player.tier or 'Unassigned' }}</span>
+                </div>
+                <div class="row g-0">
+                    <div class="col-4 bg-black d-flex flex-column justify-content-center align-items-center py-5">
+                        <div class="display-1 mb-2">{{ ROLE_ICONS.get(player.role, '👤') }}</div>
+                        <h4 class="fw-bold text-white-50 text-uppercase tracking-wider">{{ player.role }}</h4>
+                    </div>
+                    <div class="col-8 p-4 d-flex flex-column justify-content-center position-relative">
+                        <div class="position-absolute top-0 end-0 p-4 pt-5 pe-5">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow 
+                                {% if player.rating >= 90 %}bg-warning text-dark
+                                {% elif player.rating >= 80 %}bg-primary
+                                {% else %}bg-secondary{% endif %}" 
+                                style="width: 80px; height: 80px; font-size: 2.2rem; border: 4px solid rgba(255,255,255,0.2);">
+                                {{ player.rating }}
+                            </div>
+                        </div>
+                        <h1 class="display-4 fw-900 text-white mb-0" style="line-height: 1.1;">{{ player.name }}</h1>
+                        <p class="text-muted fs-5 fw-bold mb-4">Base Price: <span class="text-white">₹{{ player.base_price }} Cr</span></p>
+                        
+                        <div class="d-flex gap-3">
+                            <div class="bg-dark rounded p-3 border border-secondary flex-grow-1">
+                                <small class="text-muted fw-bold d-block text-uppercase">AI Expected</small>
+                                <h5 class="mb-0 text-success fw-bold">₹{{ "%.2f"|format(min_price|default(0)) }} - ₹{{ "%.2f"|format(max_price|default(0)) }} Cr</h5>
+                            </div>
+                            <div class="bg-dark rounded p-3 border border-secondary flex-grow-1">
+                                <small class="text-muted fw-bold d-block text-uppercase">Your Max Budget</small>
+                                <h5 class="mb-0 text-white fw-bold">₹{{ "%.2f"|format(max_bid_allowed) }} Cr</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Auction Stage -->
+            <div class="studio-card rounded-4 p-4 shadow-lg text-center position-relative overflow-hidden mb-4">
+                <div id="auction_state_badge_container" class="position-absolute top-0 start-0 w-100 py-2" style="background: rgba(0,0,0,0.5);">
+                    {% if auction_state == 'OPEN' %}
+                        <h4 class="mb-0 fw-bold text-success tracking-widest"><i class="bi bi-record-circle-fill animated-pulse me-2"></i>OPEN FOR BIDDING</h4>
+                    {% elif auction_state == 'GOING_ONCE' %}
+                        <h4 class="mb-0 fw-bold text-warning tracking-widest">⏳ GOING ONCE...</h4>
+                    {% elif auction_state == 'GOING_TWICE' %}
+                        <h4 class="mb-0 fw-bold text-warning tracking-widest">⏳ GOING TWICE...</h4>
+                    {% elif auction_state == 'FINAL_CALL' %}
+                        <h4 class="mb-0 fw-bold text-danger tracking-widest">🚨 FINAL CALL!</h4>
+                    {% elif auction_state == 'SOLD' %}
+                        <h4 class="mb-0 fw-bold text-info tracking-widest">🎉 SOLD!</h4>
+                    {% elif auction_state == 'UNSOLD' %}
+                        <h4 class="mb-0 fw-bold text-secondary tracking-widest">❌ UNSOLD</h4>
+                    {% endif %}
+                </div>
+                
+                <div class="py-5 mt-4">
+                    <small class="text-white-50 fw-bold d-block text-uppercase letter-spacing-2 mb-2">Current Bid</small>
+                    <h1 class="display-1 fw-900 text-success mb-2" id="current_bid_display_1" style="font-size: 6rem; text-shadow: 0 0 20px rgba(16, 185, 129, 0.4);">₹{{ current_bid }} Cr</h1>
+                    
+                    <div id="highest_bidder_header_container_2" class="mt-4" style="height: 60px;">
+                        {% if highest_bidder %}
+                        <div class="d-inline-flex align-items-center bg-black px-4 py-2 rounded-pill border border-secondary shadow-lg">
+                            <span class="text-white-50 me-3 fw-bold small">WITH</span>
+                            <img src="{{ url_for('static', filename=TEAM_LOGOS.get(highest_bidder, 'images/teams/mi.png')) }}" class="rounded-circle me-3 bg-white" style="width: 30px; height: 30px;">
+                            <h3 class="mb-0 fw-bold text-white" style="color: {{ TEAM_THEME.get(highest_bidder, {}).get('primary', '#fff') }} !important;">{{ highest_bidder }}</h3>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div id="bid_controls_container" class="mt-2 border-top border-secondary pt-4">
+                    {% if auction_state in ['OPEN', 'GOING_ONCE', 'GOING_TWICE', 'FINAL_CALL'] %}
+                    <form method="POST" class="d-flex gap-3 justify-content-center px-4">
+                        {% if highest_bidder == selected_team %}
+                            <button type="button" class="btn btn-secondary btn-lg flex-grow-1 fw-bold fs-3" disabled style="height: 80px;">
+                                <i class="bi bi-hourglass-split me-2"></i> LEADING
+                            </button>
+                        {% else %}
+                            <button type="submit" formaction="/bid/v2" class="btn btn-success btn-lg flex-grow-1 fw-bold fs-3 shadow-lg border border-2 border-white" style="height: 80px;">
+                                <i class="bi bi-caret-up-fill me-2"></i> RAISE BID
+                            </button>
+                        {% endif %}
+                        <button type="submit" formaction="/pass/v2" class="btn btn-danger btn-lg px-5 fw-bold fs-4 shadow-lg border border-2 border-white" style="height: 80px;">
+                            PASS
+                        </button>
+                    </form>
+                    {% set increment = 0.1 %}
+                    {% if current_bid >= 10.0 %}{% set increment = 2.0 %}
+                    {% elif current_bid >= 2.0 %}{% set increment = 1.0 %}
+                    {% elif current_bid >= 1.0 %}{% set increment = 0.2 %}
+                    {% endif %}
+                    <div class="text-center mt-3 text-white-50 small fw-bold">
+                        Next bid: ₹{{ "%.2f"|format(current_bid + increment) }} Cr
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar: Timeline & Team Wall -->
+        <div class="col-lg-5 d-flex flex-column gap-4">
+            
+            <!-- Live Timeline -->
+            <div class="studio-card rounded-4 p-0 shadow-lg flex-grow-1 d-flex flex-column h-100" style="max-height: 450px;">
+                <div class="card-header bg-transparent border-bottom border-secondary pt-3 pb-2 text-center">
+                    <h6 class="fw-bold mb-0 text-white-50 text-uppercase tracking-widest"><i class="bi bi-activity text-primary me-2"></i>Live Timeline</h6>
+                </div>
+                <div class="card-body p-0" style="overflow-y: auto;">
+                    <ul id="event_log_list" class="list-group list-group-flush bg-transparent">
+                    {% if event_log %}
+                        {% for event in event_log %}
+                        {% set event_type = event.get('event_type', '') %}
+                        {% set details = event.get('details', {}) %}
+                        
+                        <li class="list-group-item bg-transparent border-bottom border-secondary px-4 py-3 d-flex align-items-center {% if loop.first %}bg-dark bg-opacity-50{% endif %}">
+                            <span class="text-white-50 small me-3 fw-bold font-monospace" style="min-width: 50px;">{{ event.get('timestamp')[11:19] if event.get('timestamp') else '' }}</span>
+                            
+                            {% if event_type in ['BID', 'AI_BID'] %}
+                                <img src="{{ url_for('static', filename=TEAM_LOGOS.get(details.get('team_name'), 'mi.png')) }}" class="rounded-circle me-3 bg-white" style="width: 24px; height: 24px;">
+                                <div class="flex-grow-1 text-white">
+                                    <strong style="color: {{ TEAM_THEME.get(details.get('team_name'), {}).get('primary', '#fff') }}">{{ details.get('team_name', 'Unknown') }}</strong>
+                                    bid <strong class="text-success ms-2">₹{{ details.get('amount', 0) }} Cr</strong>
+                                </div>
+                            {% elif event_type in ['PASS', 'AI_PASS'] %}
+                                <div class="flex-grow-1 text-white-50 small">
+                                    {{ details.get('team_name', 'Unknown') }} passed.
+                                </div>
+                            {% elif event_type == 'SOLD' %}
+                                <div class="text-success fw-bold w-100">
+                                    <i class="bi bi-hammer me-2"></i> SOLD to {{ details.get('team_name') }} for ₹{{ details.get('amount') }} Cr
+                                </div>
+                            {% elif event_type == 'UNSOLD' %}
+                                <div class="text-danger fw-bold w-100">❌ Player went UNSOLD</div>
+                            {% elif event_type in ['GOING_ONCE', 'GOING_TWICE', 'FINAL_CALL'] %}
+                                <div class="text-warning fw-bold fst-italic w-100 small">
+                                    {{ event_type | replace('_', ' ') | title }}...
+                                </div>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    {% else %}
+                        <li class="list-group-item bg-transparent border-0 text-center text-white-50 py-5" id="waiting_bid_msg">Awaiting bids...</li>
+                    {% endif %}
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Team Logo Wall -->
+            <div class="studio-card rounded-4 p-3 shadow-lg" id="interested_teams_container">
+                <h6 class="fw-bold mb-3 text-white-50 text-uppercase tracking-widest text-center border-bottom border-secondary pb-2">Franchise Desk</h6>
+                <div class="row row-cols-5 justify-content-center g-2 text-center">
+                    {% for t in all_teams %}
+                        {% set is_active = t.team_name in interested_teams %}
+                        {% set is_leading = t.team_name == highest_bidder %}
+                        {% set is_human = t.team_name == selected_team %}
+                        
+                        <div class="col position-relative">
+                            <div class="team-logo-wall rounded bg-dark border border-secondary p-2 {% if is_leading %}leading{% elif is_active %}active{% endif %}" title="{{ t.team_name }}">
+                                <img src="{{ url_for('static', filename=TEAM_LOGOS.get(t.team_name, 'images/teams/mi.png')) }}" class="img-fluid rounded-circle bg-white shadow-sm mb-1" style="max-width: 40px; height: 40px;">
+                                <div class="text-white fw-bold font-monospace" style="font-size: 0.65rem;">₹{{ "%.1f"|format(t.budget) }}</div>
+                            </div>
+                            {% if is_human %}
+                            <div class="position-absolute top-0 end-0 translate-middle badge rounded-pill bg-primary" style="font-size: 0.5rem; z-index:5;">YOU</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Bottom Ticker -->
+<div class="ticker-wrap shadow-lg">
+    <div class="ticker text-uppercase" id="ticker_content">
+        {% if event_log %}
+            {% for event in event_log[:15] %}
+                {% set type = event.get('event_type', '') %}
+                {% set details = event.get('details', {}) %}
+                {% if type in ['BID', 'AI_BID'] %}
+                    <div class="ticker-item"><span class="text-info">{{ details.get('team_name') }}</span> BIDS <span class="text-success">₹{{ details.get('amount') }} CR</span> FOR {{ player.name }}</div>
+                {% elif type == 'SOLD' %}
+                    <div class="ticker-item"><span class="text-warning">SOLD!</span> {{ player.name }} TO {{ details.get('team_name') }} FOR ₹{{ details.get('amount') }} CR</div>
+                {% elif type == 'UNSOLD' %}
+                    <div class="ticker-item"><span class="text-danger">UNSOLD!</span> {{ player.name }} REMAINS UNSOLD</div>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <div class="ticker-item text-white-50">WELCOME TO THE IPL MEGA AUCTION... AWAITING FIRST BIDS FOR {{ player.name }}...</div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Admin controls modal trigger hidden in corner for emergency -->
+<button class="btn btn-sm btn-dark position-fixed bottom-0 end-0 m-5 opacity-25" style="z-index: 2000;" data-bs-toggle="modal" data-bs-target="#adminModal"><i class="bi bi-gear"></i></button>
+
+<!-- Admin Modal -->
+<div class="modal fade" id="adminModal" tabindex="-1" data-bs-theme="dark">
+  <div class="modal-dialog">
+    <div class="modal-content bg-dark text-white border-secondary">
+      <div class="modal-header border-secondary">
+        <h5 class="modal-title">Director Controls</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4 d-grid gap-3">
+          {% if auction_state == 'PAUSED' %}
+            <form method="POST" action="/auction/resume"><button type="submit" class="btn btn-success w-100 fw-bold">Resume Auction</button></form>
+          {% else %}
+            <form method="POST" action="/auction/pause"><button type="submit" class="btn btn-warning w-100 fw-bold">Pause Auction</button></form>
+          {% endif %}
+          <form method="POST" action="/auction/end"><button type="submit" class="btn btn-outline-danger w-100">Force End Auction</button></form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let lastBid = {{ current_bid }};
+  let lastState = "{{ auction_state }}";
+  let currentPlayer = "{{ player.name }}";
+  let currentLogLength = {{ event_log|length }};
+
+  // Poll auction state every 1.0 seconds
+  setInterval(function() {
+    fetch('/auction/state')
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'finished') {
+            window.location.reload();
+            return;
+        }
+        
+        // If player changes, reload to get new image and stats
+        if (data.player_name !== currentPlayer) {
+            window.location.reload();
+            return;
+        }
+        
+        // Check for SOLD/UNSOLD animations
+        if (data.auction_state === 'SOLD' && lastState !== 'SOLD') {
+            const team = data.highest_bidder;
+            const price = data.current_bid;
+            document.getElementById('overlaySoldTeam').innerText = team;
+            document.getElementById('overlaySoldPrice').innerText = "₹" + price.toFixed(2) + " Cr";
+            
+            // Hardcode known paths or fetch from an endpoint. For now assume static mapping
+            const logos = {
+                "CSK": "/static/images/teams/csk.png", "MI": "/static/images/teams/mi.png",
+                "RCB": "/static/images/teams/rcb.png", "GT": "/static/images/teams/gt.png",
+                "LSG": "/static/images/teams/lsg.png", "DC": "/static/images/teams/dc.png",
+                "PBKS": "/static/images/teams/pbks.png", "SRH": "/static/images/teams/srh.png",
+                "RR": "/static/images/teams/rr.png", "KKR": "/static/images/teams/kkr.png"
+            };
+            document.getElementById('overlaySoldLogo').src = logos[team] || "/static/images/teams/mi.png";
+            
+            document.getElementById('soldOverlay').classList.add('overlay-active');
+        } else if (data.auction_state === 'UNSOLD' && lastState !== 'UNSOLD') {
+            document.getElementById('unsoldOverlay').classList.add('overlay-active');
+        }
+        
+        // Safely update DOM without flickering
+        if (data.current_bid !== lastBid || data.auction_state !== lastState || data.recent_events.length !== currentLogLength) {
+            
+            if (lastState === 'SOLD' && data.auction_state === 'OPEN') {
+                window.location.reload();
+                return;
+            }
+
+            lastBid = data.current_bid;
+            lastState = data.auction_state;
+            currentLogLength = data.recent_events.length;
+            
+            fetch(window.location.href)
+              .then(res => res.text())
+              .then(html => {
+                  let parser = new DOMParser();
+                  let doc = parser.parseFromString(html, 'text/html');
+                  
+                  let elementsToSwap = [
+                      'current_bid_display_1',
+                      'auction_state_badge_container',
+                      'highest_bidder_header_container_2',
+                      'bid_controls_container',
+                      'interested_teams_container',
+                      'event_log_list',
+                      'ticker_content'
+                  ];
+                  
+                  elementsToSwap.forEach(id => {
+                      let oldEl = document.getElementById(id);
+                      let newEl = doc.getElementById(id);
+                      if (oldEl && newEl) {
+                          oldEl.innerHTML = newEl.innerHTML;
+                      }
+                  });
+              });
+        }
+      })
+      .catch(error => console.log('Polling error:', error));
+  }, 1000);
+</script>
+{% endblock %}
