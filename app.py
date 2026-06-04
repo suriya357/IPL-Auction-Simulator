@@ -14,14 +14,14 @@ def create_app():
     if db_url and db_url.startswith("postgres://"):
         db_url = db_url.replace("postgres://", "postgresql://", 1)
 
-    basedir = os.path.abspath(os.path.dirname(__file__))
-    local_db_path = f"sqlite:///{os.path.join(basedir, 'database.db')}"
-
-    app.config["SQLALCHEMY_DATABASE_URI"] = db_url or local_db_path
+    app.config["SQLALCHEMY_DATABASE_URI"] = (
+        db_url or "sqlite:///database.db"
+    )
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    app.config["SESSION_COOKIE_HTTPONLY"] = True
-    app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
-
+    
+    from models.player import Player
+    from models.team import Team
+    from models.auction import Auction
     db.init_app(app)
     with app.app_context():
         db.create_all()
