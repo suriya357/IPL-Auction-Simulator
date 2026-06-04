@@ -21,7 +21,10 @@ def create_app():
     
     from models.player import Player
     from models.team import Team
-    from models.auction import Auction
+    from models.squad import Squad
+    from models.auction import AuctionResult
+    from models.auction import AuctionEventLog
+    from models.auction import User
     db.init_app(app)
     with app.app_context():
         db.create_all()
