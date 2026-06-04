@@ -18,9 +18,13 @@ def create_app():
         db_url or "sqlite:///database.db"
     )
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    
+    from models.player import Player
+    from models.team import Team
+    from models.auction import AuctionResult, AuctionEventLog, User
+    from models.squad import TeamSquad
     db.init_app(app)
-    
+    with app.app_context():
+        db.create_all()
 
     from routes.admin_routes import admin_bp
     from routes.team_routes import team_bp
